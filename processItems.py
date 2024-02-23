@@ -1,14 +1,14 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Process scanned info
-#2/16/2024
+#2/23/2024
 
 import openpyxl
 import pandas
 from datetime import datetime
 
 
-def process (scannedItems):
+def process (scannedItems, inputFile=None):
     itemsFile = '2024-02-04_00-29-15_pack-group-1_342d6769-dbe7-43e0-bba3-61cbaeaed180-completed.xlsx' #file that holds the records of what items exist
     boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
     boxes = [] #list of all the boxes from the boxFile
@@ -86,26 +86,54 @@ def process (scannedItems):
             
     book.close()
 
+    retVal = ""
 
-    book = openpyxl.Workbook()
-    sheet = book.active
+    #if the filename was not input create a new file and add the scanned records
+    if inputFile == None:
+        book = openpyxl.Workbook()
+        sheet = book.active
 
-    #print the compiled inforamtion and also put it into a sheet
-    print("Size of compdataarr: " + str(len(compDataArr)))
-    i = 1
-    for item in compDataArr:
-        j = 1
-        for part in item:
-            print(part)
-            sheet.cell(row=i, column=j, value=part)
-            j += 1
-        i += 1
-        print("\n")
+        #print the compiled inforamtion and also put it into a sheet
+        print("Size of compdataarr: " + str(len(compDataArr)))
+        i = 1
+        for item in compDataArr:
+            j = 1
+            for part in item:
+                print(part)
+                sheet.cell(row=i, column=j, value=part)
+                j += 1
+            i += 1
+            print("\n")
 
-    now = datetime.now()
-    outputFilename = 'processed' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
-    book.save(outputFilename)
-    return outputFilename
+        now = datetime.now()
+        outputFilename = 'processed' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
+        book.save(outputFilename)
 
-#test function call to skip barcode.py
-#process(["BOX0000001", "X002Z4A4SD", "X002Z8FDVH", "X002YCVC3R", "BOX0000002", "X003UOHSL3", "X003UOK4WD"])
+        retVal = outputFilename
+    
+    else:
+        ds = pandas.read_excel(inputFile)
+        fileRows = ds.shape[0] + 1
+
+        #if a input file is passed append the scanned records to the existing file
+        book = openpyxl.load_workbook(inputFile)
+        sheet = book.active
+
+        print("Size of compdataarr: " + str(len(compDataArr)))
+        i = fileRows + 1
+        for item in compDataArr:
+            j = 1
+            for part in item:
+                print(part)
+                sheet.cell(row=i, column=j, value=part)
+                j += 1
+            i += 1
+            print("\n")
+
+        book.save(inputFile)
+        book.close()
+
+        retVal = inputFile
+
+
+    return retVal

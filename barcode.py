@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Driver program to recieve scanned info
-#2/16/2024
+#2/23/2024
 
 from pynput import keyboard
 from processItems import process
@@ -41,18 +41,29 @@ def on_press(key):
             currentItemIndex += 1
 
 
-def scanNewSheet():
+def scanSheet(filename=None):
+
+    #reset scanned item array for new session
+    global scannedItems
+    scannedItems = []
+
     #try to listen for a key unless it is escaped by pressing '/'
     try:
         with keyboard.Listener(on_press=on_press) as listener:
             listener.join()
 
+    #if the user attempts to exit by pressing '/'
     except EscapedExit:
         for item in scannedItems:
             print(item)
 
         print("Number of Scanned Items: " + str(len(scannedItems)))
-        outputFilename = process(scannedItems)
+
+        #determine wheter to create a new file or use an existing file when processing the scanned items
+        if filename is None:
+            outputFilename = process(scannedItems)
+        else:
+            outputFilename = process(scannedItems, filename)
         
         print("Terminated by User")
         return outputFilename

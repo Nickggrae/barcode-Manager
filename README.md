@@ -5,9 +5,18 @@ There is a GUI that allows you to decide if you want to start a fresh scanning s
 
 Then from the GUI you can start scanning.
 
+Once the file is created there is a sheet mangamnet window. Here you can decide to remove records from the sheet, or you can start scanning again in order to append more records to the sheet.
+
 The purpose of this program is to allow for easy documentation of the items scanned into each box for item shipments. First a box is scanned, then each item following will be associated with said box. Until another box is scanned, then each item following with be associated with said box.
 
 Now to end the scanning you need to input '/' which will end the scanning.
+
+
+2/23/2024
+1. Finished the ability to delete items from the file from the SheetMenu Frame.
+2. Created the ability to start scanning on an existing file and in the processing append the scanned data into the existing file.
+
+
 
 2/22/2024
 1. Created the GUI in order to make it more user friendly, and make all other features possible.
