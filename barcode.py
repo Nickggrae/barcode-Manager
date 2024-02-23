@@ -40,20 +40,23 @@ def on_press(key):
             currentItem += str(key)[1]
             currentItemIndex += 1
 
-#try to listen for a key unless it is escaped by pressing '/'
-try:
-    with keyboard.Listener(on_press=on_press) as listener:
-        listener.join()
 
-except EscapedExit:
-    for item in scannedItems:
-        print(item)
+def scanNewSheet():
+    #try to listen for a key unless it is escaped by pressing '/'
+    try:
+        with keyboard.Listener(on_press=on_press) as listener:
+            listener.join()
 
-    print("Number of Scanned Items: " + str(len(scannedItems)))
-    process(scannedItems)
-    
-    print("Terminated by User")
+    except EscapedExit:
+        for item in scannedItems:
+            print(item)
 
-#Start lisenting for user input (scanner)
-listener = keyboard.Listener(on_press=on_press)
-listener.start()
+        print("Number of Scanned Items: " + str(len(scannedItems)))
+        outputFilename = process(scannedItems)
+        
+        print("Terminated by User")
+        return outputFilename
+
+    #Start lisenting for user input (scanner)
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()

@@ -103,7 +103,9 @@ def process (scannedItems):
         print("\n")
 
     now = datetime.now()
-    book.save('processed' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx')
+    outputFilename = 'processed' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
+    book.save(outputFilename)
+    return outputFilename
 
 #test function call to skip barcode.py
 #process(["BOX0000001", "X002Z4A4SD", "X002Z8FDVH", "X002YCVC3R", "BOX0000002", "X003UOHSL3", "X003UOK4WD"])
