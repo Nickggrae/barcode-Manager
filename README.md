@@ -11,11 +11,22 @@ The purpose of this program is to allow for easy documentation of the items scan
 
 Now to end the scanning you need to input '/' which will end the scanning.
 
+menu.py: the driver program for the GUI.
+
+barcode.py: the driver program for the barcode scanning loop (keylogger).
+
+processItems.py: run after the barcode loop is exited to process the items scanned and configure the sheet.
+
+
+2/24/2024
+1. If a box is not scanned in then the items scanned without a related box will be dropped during processing.
+2. Now you can from the opening menu start with an existing record file that is input by the user.
+3. Now after you interact with a file and press quit the program will open the excel file.
+
 
 2/23/2024
 1. Finished the ability to delete items from the file from the SheetMenu Frame.
 2. Created the ability to start scanning on an existing file and in the processing append the scanned data into the existing file.
-
 
 
 2/22/2024
@@ -23,7 +34,6 @@ Now to end the scanning you need to input '/' which will end the scanning.
 2. Created the menu to allow the user to select that they want to start a new sheet, and start scanning which then calls the scanning and processing functions.
 3. Then I set up the basic funcationality for displaying the scanned items to the user to see if they want to modify the sheet once created.
 4. Started working on giving the user the ability to delete rows in the sheet from the GUI menu. Though I wasnt able to get it fully functioning.
-
 
 
 2/16/2024:

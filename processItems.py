@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Process scanned info
-#2/23/2024
+#2/24/2024
 
 import openpyxl
 import pandas
@@ -64,24 +64,27 @@ def process (scannedItems, inputFile=None):
         #search for the item based on its FNSKU
         i = 1 #iterate through each row
         while i <= fileRows:
-            if item == sheet.cell(row=i, column=5).value:
-                tempCompData.append(currentBox)
-                tempCompData.append(sheet.cell(row=i, column=1).value)
-                tempCompData.append(sheet.cell(row=i, column=2).value)
-                tempCompData.append(sheet.cell(row=i, column=4).value)
-                tempCompData.append(sheet.cell(row=i, column=5).value)
+            if currentBox != "": #if a box has not been scanned drop the item record
+                if item == sheet.cell(row=i, column=5).value:
+                    tempCompData.append(currentBox)
+                    tempCompData.append(sheet.cell(row=i, column=1).value)
+                    tempCompData.append(sheet.cell(row=i, column=2).value)
+                    tempCompData.append(sheet.cell(row=i, column=4).value)
+                    tempCompData.append(sheet.cell(row=i, column=5).value)
             i += 1
         
         #if the item has no data in the record sheet then still add it to the sheet but showing no data was found
-        if len(tempCompData) == 0:
-            print("Item " + item + " Has No Info In Item Record Field")
-            tempCompData.append(currentBox)
-            tempCompData.append("N/A")
-            tempCompData.append("N/A")
-            tempCompData.append("N/A")
-            tempCompData.append(item)
+        if currentBox != "": #if a box has not been scanned drop the item record
+            if len(tempCompData) == 0:
+                print("Item " + item + " Has No Info In Item Record Field")
+                tempCompData.append(currentBox)
+                tempCompData.append("N/A")
+                tempCompData.append("N/A")
+                tempCompData.append("N/A")
+                tempCompData.append(item)
 
-        compDataArr.append(tempCompData)
+            compDataArr.append(tempCompData)
+        
         tempCompData = []
             
     book.close()

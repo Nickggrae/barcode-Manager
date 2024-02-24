@@ -1,12 +1,47 @@
 # Nicholas Wharton
 # Secure Password Manager
 # Menu Controller
-# 2/23/2024
+# 2/24/2024
 
 import tkinter as tk
 from barcode import scanSheet
 import openpyxl
 import pandas
+import os
+
+
+#menu for dealing with a sheet that already exists
+class GetFilename(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller #controller of the window
+        self.filename = tk.StringVar() #the filename of the book holding the scanned records
+
+    #used when the page is loaded to refresh the displayed information
+    def refresh(self, **kwargs):
+        #destory the previous window information
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        tk.Label(self, text="-----------------------------------------").grid(row=0, column=0)
+        tk.Label(self, text="Enter Filename: ").grid(row=1, column=0)
+        tk.Entry(self, textvariable=self.filename).grid(row=2, column=0)
+        tk.Button(self, text="Continue", command=self.submit).grid(row=3, column=0)
+        tk.Button(self, text="Quit", command=self.quit).grid(row=4, column=0)
+        tk.Label(self, text="-----------------------------------------").grid(row=5, column=0)
+
+
+    #Start the scanning process on the existing file to append more records
+    def submit(self):
+        filename = self.filename.get()
+        print("FILENAME HERHERHERE: " + filename)
+        self.controller.show_frame(SheetMenu, data=filename)
+
+    #end the program
+    def quit(self):
+       self.controller.quit()
+
+
 
 #menu for dealing with a sheet that already exists
 class SheetMenu(tk.Frame):
@@ -89,7 +124,11 @@ class SheetMenu(tk.Frame):
 
     #end the program
     def quit(self):
-       self.controller.quit()
+        filename = self.filename.get()
+
+        os.system(f'start excel {filename}')
+
+        self.controller.quit()
 
 
 #Page that lets you start the scanning process for a new sheet
@@ -138,11 +177,18 @@ class Menu(tk.Frame):
         tk.Label(self, text="Would You Like To Do?").grid(row=1, column=0)
         tk.Label(self, text="-----------------------------------------").grid(row=2, column=0)
         tk.Button(self, text="Start a New Sheet", command=self.startNewSheet).grid(row=3, column=0)
-        tk.Button(self, text="Quit", command=self.quit).grid(row=5, column=0)
+        tk.Button(self, text="Use Existing Sheet", command=self.useExistingSheet).grid(row=4, column=0)
+
+        tk.Button(self, text="Quit", command=self.quit).grid(row=6, column=0)
 
     #open the start new sheet menu
     def startNewSheet(self):
         self.controller.show_frame(StartNewSheet)
+
+    #open the use an existing sheet menu
+    def useExistingSheet(self):
+        self.controller.show_frame(GetFilename)
+
 
     #end the program
     def quit(self):
@@ -159,7 +205,7 @@ class Application(tk.Tk):
 
         self.frames = {}
         #initalize which frames exist
-        for F in (Menu, StartNewSheet, SheetMenu):
+        for F in (Menu, StartNewSheet, SheetMenu, GetFilename):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
