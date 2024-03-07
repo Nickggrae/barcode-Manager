@@ -17,6 +17,21 @@ barcode.py: the driver program for the barcode scanning loop (keylogger).
 
 processItems.py: run after the barcode loop is exited to process the items scanned and configure the sheet.
 
+buildInvoice.py: will be run when the user closes the program to turn the working processed item list into the final invoice format.
+
+
+need to add:
+1. labels for the invoice sheet
+2. fill in the box matrix for each unique item in the invoice sheet
+3. configure the invoice sheet to only be generated when the user is done with the session
+4. configure way for an existing invoice sheet to be converted to a working processed items list so i can be manipulated with the previous process items functionalities.
+
+
+3/6/2024
+1. Started working on the buildInvoice functionality of the program (buildInvoice.py)
+2. Now the basic information required for the invoice is parsed and passed to the generate invoice where the basic parts of the sheet are created, but its a work in progress.
+3. now the generate invoice function is called after the processed items function is called. (which will need to be chagned to whenever the user session is completed)
+
 
 2/24/2024
 1. If a box is not scanned in then the items scanned without a related box will be dropped during processing.

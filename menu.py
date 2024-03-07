@@ -1,7 +1,7 @@
 # Nicholas Wharton
 # Secure Password Manager
 # Menu Controller
-# 2/24/2024
+# 3/6/2024
 
 import tkinter as tk
 from barcode import scanSheet
@@ -18,7 +18,7 @@ class GetFilename(tk.Frame):
         self.filename = tk.StringVar() #the filename of the book holding the scanned records
 
     #used when the page is loaded to refresh the displayed information
-    def refresh(self, **kwargs):
+    def refresh(self):
         #destory the previous window information
         for widget in self.winfo_children():
             widget.destroy()
@@ -93,10 +93,10 @@ class SheetMenu(tk.Frame):
 
         tk.Label(self, text="-----------------------------------------").grid(row=i+1, column=0)
         tk.Label(self, text="Select Row: ").grid(row=i+2, column=0)
-        tk.Entry(self, textvariable=self.selectedRowIndex).grid(row=i+2, column=1)
-        tk.Button(self, text="Delete", command=self.delete).grid(row=i+3, column=0)
-        tk.Button(self, text="Add More", command=self.append).grid(row=i+4, column=0)
-        tk.Button(self, text="Quit", command=self.quit).grid(row=i+5, column=0)
+        tk.Entry(self, textvariable=self.selectedRowIndex).grid(row=i+3, column=0)
+        tk.Button(self, text="Delete", command=self.delete).grid(row=i+4, column=0)
+        tk.Button(self, text="Add More", command=self.append).grid(row=i+5, column=0)
+        tk.Button(self, text="Quit", command=self.quit).grid(row=i+6, column=0)
 
     #delete a record from the sheet based on user input and refresh the page
     def delete(self):

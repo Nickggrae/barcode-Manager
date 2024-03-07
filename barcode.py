@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Driver program to recieve scanned info
-#2/23/2024
+#3/6/2024
 
 from pynput import keyboard
 from processItems import process
@@ -43,6 +43,20 @@ def on_press(key):
 
 def scanSheet(filename=None):
 
+    #-----for testing without scanner------
+    testSet = ["BOX0000001", "X002YCVC3R", "X002Z4A4SD", "BOX0000003", "X003UOHSL3", "BOX0000001", "X002YCVC3R", "BOX0000003", "X002YCVC3R"]
+    if filename is None:
+        outputFilename = process(testSet)
+    else:
+        outputFilename = process(testSet, filename)
+
+    return outputFilename
+    #-----for testing without scanner------
+
+
+
+
+
     #reset scanned item array for new session
     global scannedItems
     scannedItems = []
@@ -54,6 +68,7 @@ def scanSheet(filename=None):
 
     #if the user attempts to exit by pressing '/'
     except EscapedExit:
+
         for item in scannedItems:
             print(item)
 
