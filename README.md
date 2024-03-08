@@ -21,11 +21,14 @@ buildInvoice.py: will be run when the user closes the program to turn the workin
 
 
 need to add:
-1. labels for the invoice sheet
-2. fill in the box matrix for each unique item in the invoice sheet
-3. configure the invoice sheet to only be generated when the user is done with the session
-4. configure way for an existing invoice sheet to be converted to a working processed items list so i can be manipulated with the previous process items functionalities.
+1. configure the invoice sheet to only be generated when the user is done with the session
+2. configure way for an existing invoice sheet to be converted to a working processed items list so i can be manipulated with the previous process items functionalities.
 
+
+3/7/2024
+1. Cleaned up the build invoice command.
+2. Now the invoice command fully labels the data, inserts the data, and fills in the item instance-box number association matrix.
+3. raises the size of each cell in the sheet to show the full data in the cell for a better user experience.
 
 3/6/2024
 1. Started working on the buildInvoice functionality of the program (buildInvoice.py)

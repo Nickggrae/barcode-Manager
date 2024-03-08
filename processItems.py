@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Process scanned info
-#3/6/2024
+#3/7/2024
 
 import openpyxl
 import pandas
@@ -77,6 +77,8 @@ def process (scannedItems, inputFile=None):
                     tempCompData.append(sheet.cell(row=i, column=7).value)
                     tempCompData.append(sheet.cell(row=i, column=8).value)
                     tempCompData.append(sheet.cell(row=i, column=9).value)
+                    tempCompData.append(sheet.cell(row=i, column=10).value)
+                    tempCompData.append(sheet.cell(row=i, column=11).value)
             i += 1
         
         #if the item has no data in the record sheet then still add it to the sheet but showing no data was found
@@ -142,5 +144,5 @@ def process (scannedItems, inputFile=None):
 
         retVal = inputFile
 
-    buildInvoice(retVal)
+    buildInvoice(retVal, boxes)
     return retVal

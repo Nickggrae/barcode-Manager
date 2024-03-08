@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #used to build the invoice from the processed items sheet
-#3/6/2024
+#3/7/2024
 
 import openpyxl
 import pandas
@@ -9,11 +9,11 @@ from datetime import datetime
 
 
 #driver function for building a invoice from the processed item information
-def buildInvoice(inputFile):
+def buildInvoice(inputFile, boxes):
     
     uniqueItems, itemsBoxes = getItemInfo(inputFile) #get the item information needed to build the invoice from the input file
 
-    generateInvoice(uniqueItems, itemsBoxes, inputFile) #generate the invoice with the collected item information
+    generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes) #generate the invoice with the collected item information
 
 
 
@@ -78,7 +78,7 @@ def getItemInfo(inputFile):
 
 
 
-def generateInvoice(uniqueItems, itemsBoxes, inputFile):
+def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
     #how many lines are there in the boxFile
     ds = pandas.read_excel(inputFile)
     fileRows = ds.shape[0] + 1
@@ -88,7 +88,31 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile):
     sheet = book.active
 
     #add the labels and basic information to the invoice sheet
-    #sheet.cell(row=i+1, column=1, value=)
+    #sheet.cell(row=1, column=1, value="Provide the box details for this pack group below. See the instructions sheet if you have more questions")
+    sheet.cell(row=2, column=1, value="Pack Group: 1")
+    sheet.cell(row=3, column=1, value="Total SKUs: " + str(len(uniqueItems)) + " (" + str(fileRows) + " units)")
+
+    #Add the item inforamtion labels
+    sheet.cell(row=5, column=1, value="SKU")
+    sheet.cell(row=5, column=2, value="Product Title")
+    sheet.cell(row=5, column=3, value="ID")
+    sheet.cell(row=5, column=4, value="ASIN")
+    sheet.cell(row=5, column=5, value="FNSKU")
+    sheet.cell(row=5, column=6, value="Condition")
+    sheet.cell(row=5, column=7, value="Prep Type")
+    sheet.cell(row=5, column=8, value="Who Preps Unit?")
+    sheet.cell(row=5, column=9, value="Who Labels Unit?")
+    sheet.cell(row=5, column=10, value="Expected Quantity")
+    sheet.cell(row=5, column=11, value="Boxed Quantity")
+
+    #add the label for each box in the box file
+    i = 1
+    for box in boxes:
+        sheet.cell(row=5, column=11+i, value=box)
+        i += 1
+
+    sheet.cell(row=4, column=11, value="Total Box Count:")
+    sheet.cell(row=4, column=12, value=str(len(boxes)))
 
     #open the inputFile to get each items information
     inBook = openpyxl.load_workbook(inputFile)
@@ -102,19 +126,54 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile):
         while j <= fileRows:
             #if the item is one of the unique items copy its data into the invoice 
             if uniqueItems[i] == inSheet.cell(row=j, column=6).value:
-                sheet.cell(row=i+1, column=1, value=inSheet.cell(row=j, column=2).value)
-                sheet.cell(row=i+1, column=2, value=inSheet.cell(row=j, column=3).value)
-                sheet.cell(row=i+1, column=3, value=inSheet.cell(row=j, column=4).value)
-                sheet.cell(row=i+1, column=4, value=inSheet.cell(row=j, column=5).value)
-                sheet.cell(row=i+1, column=5, value=inSheet.cell(row=j, column=6).value)
-                sheet.cell(row=i+1, column=6, value=inSheet.cell(row=j, column=7).value)
-                sheet.cell(row=i+1, column=7, value=inSheet.cell(row=j, column=8).value)
-                sheet.cell(row=i+1, column=8, value=inSheet.cell(row=j, column=9).value)
+                sheet.cell(row=i + 6, column=1, value=inSheet.cell(row=j, column=2).value)
+                sheet.cell(row=i + 6, column=2, value=inSheet.cell(row=j, column=3).value)
+                sheet.cell(row=i + 6, column=3, value=inSheet.cell(row=j, column=4).value)
+                sheet.cell(row=i + 6, column=4, value=inSheet.cell(row=j, column=5).value)
+                sheet.cell(row=i + 6, column=5, value=inSheet.cell(row=j, column=6).value)
+                sheet.cell(row=i + 6, column=6, value=inSheet.cell(row=j, column=7).value)
+                sheet.cell(row=i + 6, column=7, value=inSheet.cell(row=j, column=8).value)
+                sheet.cell(row=i + 6, column=8, value=inSheet.cell(row=j, column=9).value)
+                sheet.cell(row=i + 6, column=9, value=inSheet.cell(row=j, column=10).value)
+                sheet.cell(row=i + 6, column=10, value=inSheet.cell(row=j, column=11).value)
+                sheet.cell(row=i + 6, column=11, value=inSheet.cell(row=j, column=11).value)
                 break
             j += 1
 
+        #fill in the box item association matrix
+        for box in itemsBoxes[i]:
+            characters = [char for char in box] #break the box string into an array of characters
+            boxNumber = int(characters[9]) #get the number value from the box string
+
+            #determine if a value exists for the relation between the item's instance # and the box
+            if sheet.cell(row=i + 6, column=boxNumber + 11).value is None:
+                #initalize the instance # assocaited with the box to 1
+                sheet.cell(row=i + 6, column=boxNumber + 11, value="1")
+            else:
+                #increment the current instance # assocaited with the box by 1
+                sheet.cell(row=i + 6, column=boxNumber + 11, value=str(int(sheet.cell(row=i + 6, column=boxNumber + 11).value) + 1))
+                
+
+
         i += 1
 
+
+
+
+
+
+    #set the colum width for each cell to allow the user to see all of the information when they open the sheet
+    columnMaxLen = {}
+    for row in sheet.iter_rows(values_only=True):
+        for i, cellText in enumerate(row, start=1):
+            if i not in columnMaxLen:
+                columnMaxLen[i] = len(str(cellText))
+            else:
+                columnMaxLen[i] = max(columnMaxLen[i], len(str(cellText)))
+
+    # Set column width based on the maximum length of text
+    for column, maxLen in columnMaxLen.items():
+        sheet.column_dimensions[sheet.cell(row=1, column=column).column_letter].width = maxLen
 
     
 
