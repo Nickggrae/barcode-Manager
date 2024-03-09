@@ -41,14 +41,14 @@ def on_press(key):
             currentItemIndex += 1
 
 
-def scanSheet(filename=None):
+def scanSheet(itemFile, boxFile, filename=None):
 
     #-----for testing without scanner------
-    testSet = ["BOX0000001", "X002YCVC3R", "X002Z4A4SD", "BOX0000003", "X003UOHSL3", "BOX0000001", "X002YCVC3R", "BOX0000003", "X002YCVC3R"]
+    testSet = ["BOX0000001", "X002YCVC3R", "X002Z4A4SD", "BOX0000003", "X003UOHSL3", "BOX0000001", "X002YCVC3R", "BOX0000003", "X002YCVC3R", "BOX0000005", "X003TC53GX", "X003Y3QZ19", "BOX0000007", "X0044EDIRV", "X0044ECG1Z"]
     if filename is None:
-        outputFilename = process(testSet)
+        outputFilename = process(testSet, itemFile, boxFile)
     else:
-        outputFilename = process(testSet, filename)
+        outputFilename = process(testSet, itemFile, boxFile, filename)
 
     return outputFilename
     #-----for testing without scanner------

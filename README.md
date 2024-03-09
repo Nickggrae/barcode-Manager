@@ -21,9 +21,13 @@ buildInvoice.py: will be run when the user closes the program to turn the workin
 
 
 need to add:
-1. configure the invoice sheet to only be generated when the user is done with the session
-2. configure way for an existing invoice sheet to be converted to a working processed items list so i can be manipulated with the previous process items functionalities.
+1. configure way for an existing invoice sheet to be converted to a working processed items list so i can be manipulated with the previous process items functionalities.
 
+3/8/2024
+1. Finished the labeling for the generateInvoice() function.
+2. Made the invoice closer to human readable. (Colors and proper formatting)
+3. Now the invoice file is opened at the end of the user session.
+4. Now the building of the invoice is run at the end of each user session from the working processed file. Where the menu calls the invoice generation function when the user presses the quit button.
 
 3/7/2024
 1. Cleaned up the build invoice command.

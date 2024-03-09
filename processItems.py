@@ -6,12 +6,9 @@
 import openpyxl
 import pandas
 from datetime import datetime
-from buildInvoice import buildInvoice
 
 
-def process (scannedItems, inputFile=None):
-    itemsFile = '2024-02-04_00-29-15_pack-group-1_342d6769-dbe7-43e0-bba3-61cbaeaed180-completed.xlsx' #file that holds the records of what items exist
-    boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
+def process (scannedItems, itemsFile, boxFile, inputFile=None):
     boxes = [] #list of all the boxes from the boxFile
 
     tempCompData = [] #holds a item record with its pulled item data
@@ -144,5 +141,4 @@ def process (scannedItems, inputFile=None):
 
         retVal = inputFile
 
-    buildInvoice(retVal, boxes)
     return retVal

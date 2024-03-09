@@ -8,6 +8,10 @@ from barcode import scanSheet
 import openpyxl
 import pandas
 import os
+from buildInvoice import buildInvoice
+
+itemsFile = '2024-02-04_00-29-15_pack-group-1_342d6769-dbe7-43e0-bba3-61cbaeaed180-completed.xlsx' #file that holds the records of what items exist
+boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
 
 
 #menu for dealing with a sheet that already exists
@@ -34,7 +38,6 @@ class GetFilename(tk.Frame):
     #Start the scanning process on the existing file to append more records
     def submit(self):
         filename = self.filename.get()
-        print("FILENAME HERHERHERE: " + filename)
         self.controller.show_frame(SheetMenu, data=filename)
 
     #end the program
@@ -58,10 +61,9 @@ class SheetMenu(tk.Frame):
             widget.destroy()
 
         filename = ""
-
         #get the user input if possible
         try:
-            filename = kwargs.get("data")
+            filename = kwargs.get("processedFilename")
         except:
             filename = self.filename.get()
         
@@ -69,7 +71,6 @@ class SheetMenu(tk.Frame):
         if filename is None:
             filename = self.filename.get()
 
-        print("KWARGS WORKS IF THIS SHOWS FILENAME: " + str(filename))
         self.filename.set(filename)
 
         #determine how many records are in the file
@@ -118,15 +119,15 @@ class SheetMenu(tk.Frame):
     #Start the scanning process on the existing file to append more records
     def append(self):
         filename = self.filename.get()
-        scanSheet(filename)
+        outputFilename = scanSheet(itemsFile, boxFile, filename)
 
         self.refresh()
 
     #end the program
     def quit(self):
-        filename = self.filename.get()
+        invoiceFilename = buildInvoice(self.filename.get(), boxFile)
 
-        os.system(f'start excel {filename}')
+        os.system(f'start excel {invoiceFilename}')
 
         self.controller.quit()
 
@@ -151,9 +152,9 @@ class StartNewSheet(tk.Frame):
 
     #start the scanning process to be added to a newly created sheet, then open the sheet menu for the created sheet
     def startNewSheet(self):
-       outputFilename = scanSheet()
+       outputFilename = scanSheet(itemsFile, boxFile)
        print ("Output Filename: " + outputFilename)
-       self.controller.show_frame(SheetMenu, data=outputFilename)
+       self.controller.show_frame(SheetMenu, processedFilename=outputFilename)
 
     #end the program
     def quit(self):
