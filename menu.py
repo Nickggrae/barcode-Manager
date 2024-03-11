@@ -9,6 +9,7 @@ import openpyxl
 import pandas
 import os
 from buildInvoice import buildInvoice
+from invoiceToProcessed import invoiceToProcessed
 
 itemsFile = '2024-02-04_00-29-15_pack-group-1_342d6769-dbe7-43e0-bba3-61cbaeaed180-completed.xlsx' #file that holds the records of what items exist
 boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
@@ -38,7 +39,8 @@ class GetFilename(tk.Frame):
     #Start the scanning process on the existing file to append more records
     def submit(self):
         filename = self.filename.get()
-        self.controller.show_frame(SheetMenu, data=filename)
+        self.controller.show_frame(SheetMenu, processedFilename=filename)
+        print("filename: " + filename)
 
     #end the program
     def quit(self):
@@ -61,18 +63,22 @@ class SheetMenu(tk.Frame):
             widget.destroy()
 
         filename = ""
+        print ("refresh: " + self.filename.get())
         #get the user input if possible
-        try:
-            filename = kwargs.get("processedFilename")
-        except:
-            filename = self.filename.get()
+        filename = str(kwargs.get("processedFilename"))
         
         #determine if the filename was input
-        if filename is None:
+        if filename == "None":
             filename = self.filename.get()
+        else:
+            print("else " + filename)
+            self.filename.set(filename)
 
-        self.filename.set(filename)
+        if filename[0] == 'i':
+            filename = invoiceToProcessed(filename)
+            self.filename.set(filename)
 
+        print ("refresh: " + self.filename.get())
         #determine how many records are in the file
         ds = pandas.read_excel(filename)
         fileRows = ds.shape[0] + 1

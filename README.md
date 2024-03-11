@@ -19,9 +19,17 @@ processItems.py: run after the barcode loop is exited to process the items scann
 
 buildInvoice.py: will be run when the user closes the program to turn the working processed item list into the final invoice format.
 
+invoiceToProcessed.py: converts invoice format to back to the processed format (just a light of all the items data).
+
 
 need to add:
-1. configure way for an existing invoice sheet to be converted to a working processed items list so i can be manipulated with the previous process items functionalities.
+1. Check if filename exists before it is sent to the sheet menu.
+2. Clean up working files.
+3. Change item info file to be the full file format.
+
+3/9/2024
+1. invoiceToProcessed.py was created with the invoiceToProcessed() function to turn the invoice sheet into the processed sheet so it can be input by the user and converted to where the program can manipulate it.
+2. Now invoice files can be input so the processessing files are no longer needed by the user.
 
 3/8/2024
 1. Finished the labeling for the generateInvoice() function.

@@ -75,7 +75,6 @@ def process (scannedItems, itemsFile, boxFile, inputFile=None):
                     tempCompData.append(sheet.cell(row=i, column=8).value)
                     tempCompData.append(sheet.cell(row=i, column=9).value)
                     tempCompData.append(sheet.cell(row=i, column=10).value)
-                    tempCompData.append(sheet.cell(row=i, column=11).value)
             i += 1
         
         #if the item has no data in the record sheet then still add it to the sheet but showing no data was found

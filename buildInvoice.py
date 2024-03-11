@@ -7,7 +7,6 @@ import openpyxl
 from openpyxl.styles import PatternFill
 import pandas
 from datetime import datetime
-import os
 
 
 #driver function for building a invoice from the processed item information
@@ -187,14 +186,14 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
             boxNumber = int(characters[9]) #get the number value from the box string
 
             #determine if a value exists for the relation between the item's instance # and the box
-            if sheet.cell(row=i + 6, column=boxNumber + 13).value is None:
+            if sheet.cell(row=i + 6, column=boxNumber + 14).value is None:
                 #initalize the instance # assocaited with the box to 1
-                sheet.cell(row=i + 6, column=boxNumber + 13, value="1")
-                cell = sheet.cell(row=i + 6, column=boxNumber + 13)
+                sheet.cell(row=i + 6, column=boxNumber + 14, value="1")
+                cell = sheet.cell(row=i + 6, column=boxNumber + 14)
                 cell.fill = PatternFill(start_color="FFFFE0", end_color="FFFFE0", fill_type="solid")
             else:
                 #increment the current instance # assocaited with the box by 1
-                sheet.cell(row=i + 6, column=boxNumber + 13, value=str(int(sheet.cell(row=i + 6, column=boxNumber + 13).value) + 1))  
+                sheet.cell(row=i + 6, column=boxNumber + 14, value=str(int(sheet.cell(row=i + 6, column=boxNumber + 14).value) + 1))  
         
         i += 1 #increment to next unqiue item index
     
@@ -272,6 +271,7 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
     #generate a name for the invoice and save the file
     now = datetime.now()
     outputFilename = 'invoice' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
+    print(outputFilename)
 
     book.save(outputFilename)
     return outputFilename
