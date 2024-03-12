@@ -29,6 +29,7 @@ need to add:
 6. make the application window resulation configurable from the application
 7. make the application start from the running of a single executable
 8. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
+9. when box isnt scanned first (send dirty message)
 
 3/11/2024
 1. Added a global text size field which controlls the size of all text on the application. 
