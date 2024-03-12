@@ -11,9 +11,10 @@ import os
 from buildInvoice import buildInvoice
 from invoiceToProcessed import invoiceToProcessed
 
-itemsFile = '2024-02-04_00-29-15_pack-group-1_342d6769-dbe7-43e0-bba3-61cbaeaed180-completed.xlsx' #file that holds the records of what items exist
+itemsFile = 'SKU-Source-File.xlsx' #file that holds the records of what items exist
 boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
 
+fontSize = 15
 
 #menu for dealing with a sheet that already exists
 class GetFilename(tk.Frame):
@@ -28,19 +29,18 @@ class GetFilename(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
-        tk.Label(self, text="-----------------------------------------").grid(row=0, column=0)
-        tk.Label(self, text="Enter Filename: ").grid(row=1, column=0)
-        tk.Entry(self, textvariable=self.filename).grid(row=2, column=0)
-        tk.Button(self, text="Continue", command=self.submit).grid(row=3, column=0)
-        tk.Button(self, text="Quit", command=self.quit).grid(row=4, column=0)
-        tk.Label(self, text="-----------------------------------------").grid(row=5, column=0)
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Enter Filename: ", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Entry(self, textvariable=self.filename, font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Button(self, text="Continue", font=("Helvetica", fontSize), command=self.submit).pack(anchor="center")
+        tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
 
 
     #Start the scanning process on the existing file to append more records
     def submit(self):
         filename = self.filename.get()
         self.controller.show_frame(SheetMenu, processedFilename=filename)
-        print("filename: " + filename)
 
     #end the program
     def quit(self):
@@ -62,29 +62,30 @@ class SheetMenu(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
+        v = tk.Scrollbar(self)
+        v.pack(side = "right", fill = "y")
+
         filename = ""
-        print ("refresh: " + self.filename.get())
         #get the user input if possible
         filename = str(kwargs.get("processedFilename"))
         
+        t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Helvetica", fontSize))
+
         #determine if the filename was input
         if filename == "None":
             filename = self.filename.get()
         else:
-            print("else " + filename)
             self.filename.set(filename)
 
         if filename[0] == 'i':
             filename = invoiceToProcessed(filename)
             self.filename.set(filename)
 
-        print ("refresh: " + self.filename.get())
         #determine how many records are in the file
         ds = pandas.read_excel(filename)
         fileRows = ds.shape[0] + 1
 
-
-        tk.Label(self, text="-----------------------------------------").grid(row=0, column=0)
+        t.insert("end", "-----------------------------------------\n")
         
         #open the book for reading the lines
         book = openpyxl.load_workbook(filename)
@@ -93,17 +94,20 @@ class SheetMenu(tk.Frame):
         #store all the box names into a list of strings
         i = 1
         while i <= fileRows:
-            tk.Label(self, text=str(i) + ": " + sheet.cell(row=i, column=1).value + ", " + sheet.cell(row=i, column=2).value).grid(row=i, column=0)
+            t.insert("end", str(i) + ": " + sheet.cell(row=i, column=1).value + ", " + sheet.cell(row=i, column=3).value + "\n")
             i += 1
+
+        t.pack(side="left", fill="both", expand=True)
+        v.config(command=t.yview)
 
         book.close()
 
-        tk.Label(self, text="-----------------------------------------").grid(row=i+1, column=0)
-        tk.Label(self, text="Select Row: ").grid(row=i+2, column=0)
-        tk.Entry(self, textvariable=self.selectedRowIndex).grid(row=i+3, column=0)
-        tk.Button(self, text="Delete", command=self.delete).grid(row=i+4, column=0)
-        tk.Button(self, text="Add More", command=self.append).grid(row=i+5, column=0)
-        tk.Button(self, text="Quit", command=self.quit).grid(row=i+6, column=0)
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Select Row: ", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Entry(self, textvariable=self.selectedRowIndex, font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Button(self, text="Delete", font=("Helvetica", fontSize), command=self.delete).pack(anchor="center")
+        tk.Button(self, text="Add More", font=("Helvetica", fontSize), command=self.append).pack(anchor="center")
+        tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
 
     #delete a record from the sheet based on user input and refresh the page
     def delete(self):
@@ -126,16 +130,18 @@ class SheetMenu(tk.Frame):
     def append(self):
         filename = self.filename.get()
         outputFilename = scanSheet(itemsFile, boxFile, filename)
-
+        
         self.refresh()
 
     #end the program
     def quit(self):
         invoiceFilename = buildInvoice(self.filename.get(), boxFile)
-
+        os.remove(self.filename.get())
         os.system(f'start excel {invoiceFilename}')
 
         self.controller.quit()
+
+
 
 
 #Page that lets you start the scanning process for a new sheet
@@ -150,11 +156,11 @@ class StartNewSheet(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
-        tk.Label(self, text="-----------------------------------------").grid(row=0, column=0)
-        tk.Label(self, text="Empty Start New Sheet?").grid(row=1, column=0)
-        tk.Label(self, text="-----------------------------------------").grid(row=2, column=0)
-        tk.Button(self, text="Start Scan", command=self.startNewSheet).grid(row=3, column=0)
-        tk.Button(self, text="Quit", command=self.quit).grid(row=5, column=0)
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Empty Start New Sheet?", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Button(self, text="Start Scan", font=("Helvetica", fontSize), command=self.startNewSheet).pack(anchor="center")
+        tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
 
     #start the scanning process to be added to a newly created sheet, then open the sheet menu for the created sheet
     def startNewSheet(self):
@@ -180,13 +186,13 @@ class Menu(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
-        tk.Label(self, text="-----------------------------------------").grid(row=0, column=0)
-        tk.Label(self, text="Would You Like To Do?").grid(row=1, column=0)
-        tk.Label(self, text="-----------------------------------------").grid(row=2, column=0)
-        tk.Button(self, text="Start a New Sheet", command=self.startNewSheet).grid(row=3, column=0)
-        tk.Button(self, text="Use Existing Sheet", command=self.useExistingSheet).grid(row=4, column=0)
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Would You Like To Do?", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Button(self, text="Start a New Sheet", font=("Helvetica", fontSize), command=self.startNewSheet).pack(anchor="center")
+        tk.Button(self, text="Use Existing Sheet", font=("Helvetica", fontSize), command=self.useExistingSheet).pack(anchor="center")
 
-        tk.Button(self, text="Quit", command=self.quit).grid(row=6, column=0)
+        tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
 
     #open the start new sheet menu
     def startNewSheet(self):
@@ -209,6 +215,8 @@ class Application(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self) #controller of the window
         container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
         #initalize which frames exist
@@ -232,5 +240,5 @@ class Application(tk.Tk):
 
 if __name__ == "__main__":
     app = Application()
-    app.geometry("300x600")
+    app.geometry("1000x600")
     app.mainloop()

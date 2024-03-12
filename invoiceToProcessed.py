@@ -1,6 +1,5 @@
 import openpyxl
 from datetime import datetime
-import os
 
 #used to convert the invoice sheets into the list of item records so they can be processed in the program
 def invoiceToProcessed(invoiceFilename):
@@ -10,7 +9,7 @@ def invoiceToProcessed(invoiceFilename):
     invoiceBook = openpyxl.load_workbook(invoiceFilename)
     invoiceSheet = invoiceBook.active
 
-    boxCount = int(invoiceSheet.cell(row=3, column=14).value)
+    boxCount = int(invoiceSheet.cell(row=3, column=6).value)
 
     #get the total SKUs cell and get the number of unique items to know how many 
     totalSKUs = invoiceSheet.cell(row=3, column=1).value
@@ -26,25 +25,18 @@ def invoiceToProcessed(invoiceFilename):
     while i < uniqueItems:
         j = 0
         while j < boxCount:
-            tempCellVal = invoiceSheet.cell(row=i + 6, column=14 + j).value
+            tempCellVal = invoiceSheet.cell(row=i + 6, column=7 + j).value
             if (tempCellVal != None):
                 z = 0
                 while z < int(tempCellVal):
-                    sheet.cell(row=instanceCount, column=1, value=invoiceSheet.cell(row=5, column=14 + j).value)
+                    sheet.cell(row=instanceCount, column=1, value=invoiceSheet.cell(row=5, column=7 + j).value)
                     sheet.cell(row=instanceCount, column=2, value=invoiceSheet.cell(row=i + 6, column=1).value)
                     sheet.cell(row=instanceCount, column=3, value=invoiceSheet.cell(row=i + 6, column=2).value)
                     sheet.cell(row=instanceCount, column=4, value=invoiceSheet.cell(row=i + 6, column=3).value)
                     sheet.cell(row=instanceCount, column=5, value=invoiceSheet.cell(row=i + 6, column=4).value)
-                    sheet.cell(row=instanceCount, column=6, value=invoiceSheet.cell(row=i + 6, column=5).value)
-                    sheet.cell(row=instanceCount, column=7, value=invoiceSheet.cell(row=i + 6, column=6).value)
-                    sheet.cell(row=instanceCount, column=8, value=invoiceSheet.cell(row=i + 6, column=7).value)
-                    sheet.cell(row=instanceCount, column=9, value=invoiceSheet.cell(row=i + 6, column=8).value)
-                    sheet.cell(row=instanceCount, column=10, value=invoiceSheet.cell(row=i + 6, column=9).value)
                     instanceCount += 1
                     z += 1
-
             j += 1
-
         i += 1
 
     #generate a name for the invoice and save the file

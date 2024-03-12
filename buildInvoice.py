@@ -15,7 +15,7 @@ def buildInvoice(inputFile, boxFile):
     uniqueItems, itemsBoxes, boxes = getItemInfo(inputFile, boxFile) #get the item information needed to build the invoice from the input file
 
     outputFile = generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes) #generate the invoice with the collected item information
-
+    
     return outputFile
 
 
@@ -37,13 +37,9 @@ def getItemInfo(inputFile, boxFile):
     i = 1
     while i <= fileRows:
         boxes.append(sheet.cell(row=i, column=1).value)
-        print("BOX INPUT: " + sheet.cell(row=i, column=1).value)
         i += 1
 
     book.close()
-
-    print("box array asdasd")
-    print(boxes)
 
     #how many lines are there in the boxFile
     ds = pandas.read_excel(inputFile)
@@ -57,8 +53,10 @@ def getItemInfo(inputFile, boxFile):
     i = 1
     while i <= fileRows:
         #grab the first items FNSKU and its corresponding box
-        currItem = sheet.cell(row=i, column=6).value
+        currItem = sheet.cell(row=i, column=3).value
         currItemBox = sheet.cell(row=i, column=1).value
+
+        print("currItem: " + currItem + "    currItemBox: " + currItemBox)
 
         #check if this item already has a record in the unique items array
         isDistinct = True
@@ -76,7 +74,6 @@ def getItemInfo(inputFile, boxFile):
         else:
             j = 0
             while j < len(uniqueItems): #find where the items record is stored
-                print ("curritem: " + currItem + "    unqiqueItem: " + uniqueItems[j])
                 if currItem == uniqueItems[j]:
                     itemsBoxes[j].append(currItemBox) #add the items box to its current box record array
                 j += 1
@@ -121,37 +118,30 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
 
 
     #Add the item inforamtion labels
-    sheet.cell(row=5, column=1, value="SKU")
-    sheet.cell(row=5, column=2, value="Product Title")
-    sheet.cell(row=5, column=3, value="ID")
-    sheet.cell(row=5, column=4, value="ASIN")
-    sheet.cell(row=5, column=5, value="FNSKU")
-    sheet.cell(row=5, column=6, value="Condition")
-    sheet.cell(row=5, column=7, value="Prep Type")
-    sheet.cell(row=5, column=8, value="Who Preps Unit?")
-    sheet.cell(row=5, column=9, value="Who Labels Unit?")
-    sheet.cell(row=5, column=10, value="Expected Quantity")
-    sheet.cell(row=5, column=11, value="Boxed Quantity")
+    sheet.cell(row=5, column=1, value="Product Title")
+    sheet.cell(row=5, column=2, value="FNSKU")
+    sheet.cell(row=5, column=3, value="SKU")
+    sheet.cell(row=5, column=4, value="ID")
 
     #color labeled and empty cells
-    for b in range(1, 12):
+    for b in range(1, 5):
         cell = sheet.cell(row=5, column=b)
         cell.fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
 
     #add the label for each box in the box file
     i = 1
     for box in boxes:
-        sheet.cell(row=5, column=13+i, value=box)
-        cell = sheet.cell(row=5, column=13+i)
+        sheet.cell(row=5, column=6+i, value=box)
+        cell = sheet.cell(row=5, column=6+i)
         cell.fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
         i += 1
 
-    sheet.cell(row=3, column=13, value="Total Box Count:")
-    sheet.cell(row=3, column=14, value=str(len(boxes)))
+    sheet.cell(row=3, column=5, value="Total Box Count:")
+    sheet.cell(row=3, column=6, value=str(len(boxes)))
 
-    cell = sheet.cell(row=3, column=13)
+    cell = sheet.cell(row=3, column=5)
     cell.fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
-    cell = sheet.cell(row=3, column=14)
+    cell = sheet.cell(row=3, column=6)
     cell.fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
 
     #open the inputFile to get each items information
@@ -165,18 +155,13 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
         #for each item in the input file
         while j <= fileRows:
             #if the item is one of the unique items copy its data into the invoice 
-            if uniqueItems[i] == inSheet.cell(row=j, column=6).value:
+            if uniqueItems[i] == inSheet.cell(row=j, column=3).value:
+                print(inSheet.cell(row=j, column=2).value + "    " + inSheet.cell(row=j, column=3).value)
+
                 sheet.cell(row=i + 6, column=1, value=inSheet.cell(row=j, column=2).value)
                 sheet.cell(row=i + 6, column=2, value=inSheet.cell(row=j, column=3).value)
                 sheet.cell(row=i + 6, column=3, value=inSheet.cell(row=j, column=4).value)
                 sheet.cell(row=i + 6, column=4, value=inSheet.cell(row=j, column=5).value)
-                sheet.cell(row=i + 6, column=5, value=inSheet.cell(row=j, column=6).value)
-                sheet.cell(row=i + 6, column=6, value=inSheet.cell(row=j, column=7).value)
-                sheet.cell(row=i + 6, column=7, value=inSheet.cell(row=j, column=8).value)
-                sheet.cell(row=i + 6, column=8, value=inSheet.cell(row=j, column=9).value)
-                sheet.cell(row=i + 6, column=9, value=inSheet.cell(row=j, column=10).value)
-                sheet.cell(row=i + 6, column=10, value=inSheet.cell(row=j, column=11).value)
-                sheet.cell(row=i + 6, column=11, value=inSheet.cell(row=j, column=11).value)
                 break
             j += 1
 
@@ -186,20 +171,20 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
             boxNumber = int(characters[9]) #get the number value from the box string
 
             #determine if a value exists for the relation between the item's instance # and the box
-            if sheet.cell(row=i + 6, column=boxNumber + 14).value is None:
+            if sheet.cell(row=i + 6, column=boxNumber + 7).value is None:
                 #initalize the instance # assocaited with the box to 1
-                sheet.cell(row=i + 6, column=boxNumber + 14, value="1")
-                cell = sheet.cell(row=i + 6, column=boxNumber + 14)
+                sheet.cell(row=i + 6, column=boxNumber + 7, value="1")
+                cell = sheet.cell(row=i + 6, column=boxNumber + 7)
                 cell.fill = PatternFill(start_color="FFFFE0", end_color="FFFFE0", fill_type="solid")
             else:
                 #increment the current instance # assocaited with the box by 1
-                sheet.cell(row=i + 6, column=boxNumber + 14, value=str(int(sheet.cell(row=i + 6, column=boxNumber + 14).value) + 1))  
+                sheet.cell(row=i + 6, column=boxNumber + 7, value=str(int(sheet.cell(row=i + 6, column=boxNumber + 7).value) + 1))  
         
         i += 1 #increment to next unqiue item index
     
     
     #color empty cells
-    for b in range(1, 14 + len(boxes)):
+    for b in range(1, 7 + len(boxes)):
         cell = sheet.cell(row=4, column=b)
         cell.fill = PatternFill(start_color="808080", end_color="808080", fill_type="solid")
         cell = sheet.cell(row=i + 6, column=b)
@@ -211,34 +196,34 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
 
     #color empty cells
     for b in range(4, i + 5):
-        cell = sheet.cell(row=b, column=12)
+        cell = sheet.cell(row=b, column=5)
         cell.fill = PatternFill(start_color="808080", end_color="808080", fill_type="solid")
 
     for b in range(4, i + 6):
-        cell = sheet.cell(row=b, column=14 + len(boxes))
+        cell = sheet.cell(row=b, column=7 + len(boxes))
         cell.fill = PatternFill(start_color="808080", end_color="808080", fill_type="solid")
 
     #more labels
-    sheet.cell(row=i, column=13, value="Name of Box")
-    sheet.cell(row=i + 1, column=13, value="Box Weight (lbs):")
-    sheet.cell(row=i + 2, column=13, value="Box Width (inch):")
-    sheet.cell(row=i + 3, column=13, value="Box Length (inch):")
-    sheet.cell(row=i + 4, column=13, value="Box Height (inch):")
+    sheet.cell(row=i, column=6, value="Name of Box")
+    sheet.cell(row=i + 1, column=6, value="Box Weight (lbs):")
+    sheet.cell(row=i + 2, column=6, value="Box Width (inch):")
+    sheet.cell(row=i + 3, column=6, value="Box Length (inch):")
+    sheet.cell(row=i + 4, column=6, value="Box Height (inch):")
 
     #color empty cells
     for b in range(0, 5):
-        cell = sheet.cell(row=i + b, column=13)
+        cell = sheet.cell(row=i + b, column=6)
         cell.fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
 
     for b in range(5, 6 + len(uniqueItems)):
-        cell = sheet.cell(row=b, column=13)
+        cell = sheet.cell(row=b, column=6)
         cell.fill = PatternFill(start_color="808080", end_color="808080", fill_type="solid")
 
     #Label for each box
     c = 1
     while c <= len(boxes):
-        sheet.cell(row=i, column=13 + c, value="P1 - B" + str(c - 1))
-        cell = sheet.cell(row=i, column=13 + c)
+        sheet.cell(row=i, column=6 + c, value="P1 - B" + str(c - 1))
+        cell = sheet.cell(row=i, column=6 + c)
         cell.fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
         c += 1
 

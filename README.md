@@ -24,10 +24,19 @@ invoiceToProcessed.py: converts invoice format to back to the processed format (
 
 need to add:
 1. Check if filename exists before it is sent to the sheet menu.
-2. Clean up working files.
-3. Change item info file to be the full file format.
+4. Pull boxfilename and itemfilename from a sheet and make them configurable from the application
+5. make the font size comfigurable from the application
+6. make the application window resulation configurable from the application
+7. make the application start from the running of a single executable
+8. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
 
-3/9/2024
+3/11/2024
+1. Added a global text size field which controlls the size of all text on the application. 
+2. Now the sheet menu allows for scrolling so you can always see all the elements pulled from the working sheet.
+3. Clean up working files after the invoice is generated
+4. Changed the source sheet to fit the required specifications
+
+3/10/2024
 1. invoiceToProcessed.py was created with the invoiceToProcessed() function to turn the invoice sheet into the processed sheet so it can be input by the user and converted to where the program can manipulate it.
 2. Now invoice files can be input so the processessing files are no longer needed by the user.
 

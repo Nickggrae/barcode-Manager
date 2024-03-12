@@ -63,18 +63,12 @@ def process (scannedItems, itemsFile, boxFile, inputFile=None):
         i = 1 #iterate through each row
         while i <= fileRows:
             if currentBox != "": #if a box has not been scanned drop the item record
-                if item == sheet.cell(row=i, column=5).value:
+                if item == sheet.cell(row=i, column=2).value:
                     tempCompData.append(currentBox)
                     tempCompData.append(sheet.cell(row=i, column=1).value)
                     tempCompData.append(sheet.cell(row=i, column=2).value)
                     tempCompData.append(sheet.cell(row=i, column=3).value)
                     tempCompData.append(sheet.cell(row=i, column=4).value)
-                    tempCompData.append(sheet.cell(row=i, column=5).value)
-                    tempCompData.append(sheet.cell(row=i, column=6).value)
-                    tempCompData.append(sheet.cell(row=i, column=7).value)
-                    tempCompData.append(sheet.cell(row=i, column=8).value)
-                    tempCompData.append(sheet.cell(row=i, column=9).value)
-                    tempCompData.append(sheet.cell(row=i, column=10).value)
             i += 1
         
         #if the item has no data in the record sheet then still add it to the sheet but showing no data was found
