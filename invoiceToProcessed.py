@@ -1,3 +1,8 @@
+#Nicholas Wharton
+#Barcode Scanner Item Managment
+#used to turn the invoice isnt a list of all the item instances
+#3/11/2024
+
 import openpyxl
 from datetime import datetime
 

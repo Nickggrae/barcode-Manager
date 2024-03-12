@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Process scanned info
-#3/7/2024
+#3/11/2024
 
 import openpyxl
 import pandas

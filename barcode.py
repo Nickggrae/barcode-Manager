@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #Driver program to recieve scanned info
-#3/6/2024
+#3/11/2024
 
 from pynput import keyboard
 from processItems import process
@@ -45,13 +45,13 @@ def scanSheet(itemFile, boxFile, filename=None):
 
     #-----for testing without scanner------
     #testSet = ["BOX0000001", "X002YCVC3R", "X002Z4A4SD", "BOX0000003", "X003UOHSL3", "BOX0000001", "X002YCVC3R", "BOX0000003", "X002YCVC3R", "BOX0000005", "X003TC53GX", "X003Y3QZ19", "BOX0000007", "X0044EDIRV", "X0044ECG1Z"]
-    testSet = ["BOX0000001", "X002YCVC3R", "X002Z4A4SD", "BOX0000004", "X002YCVC3R", "X002Z4A4SD", "BOX0000002", "X003UOHSL3", "BOX0000008", "X002YCVC3R", "BOX0000007", "X002YCVC3R", "BOX0000005", "X003TC53GX", "X003Y3QZ19", "BOX0000009", "X0044EDIRV", "X0044ECG1Z", "BOX0000009", "X0044EDIRV", "X0044ECG1Z"]
-    if filename is None:
-        outputFilename = process(testSet, itemFile, boxFile)
-    else:
-        outputFilename = process(testSet, itemFile, boxFile, filename)
+    # testSet = ["BOX0000001", "X002YCVC3R", "X002Z4A4SD", "BOX0000004", "X002YCVC3R", "X002Z4A4SD", "BOX0000002", "X003UOHSL3", "BOX0000008", "X002YCVC3R", "BOX0000007", "X002YCVC3R", "BOX0000005", "X003TC53GX", "X003Y3QZ19", "BOX0000009", "X0044EDIRV", "X0044ECG1Z", "BOX0000009", "X0044EDIRV", "X0044ECG1Z"]
+    # if filename is None:
+    #     outputFilename = process(testSet, itemFile, boxFile)
+    # else:
+    #     outputFilename = process(testSet, itemFile, boxFile, filename)
 
-    return outputFilename
+    # return outputFilename
     #-----for testing without scanner------
 
 

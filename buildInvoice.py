@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #used to build the invoice from the processed items sheet
-#3/7/2024
+#3/11/2024
 
 import openpyxl
 from openpyxl.styles import PatternFill
