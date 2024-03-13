@@ -259,4 +259,5 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
     print(outputFilename)
 
     book.save(outputFilename)
+    book.close()
     return outputFilename

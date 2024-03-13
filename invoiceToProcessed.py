@@ -50,5 +50,6 @@ def invoiceToProcessed(invoiceFilename):
     print(outputFilename)
 
     book.save(outputFilename)
+    book.close()
 
     return outputFilename

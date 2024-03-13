@@ -136,6 +136,7 @@ class SheetMenu(tk.Frame):
     #end the program
     def quit(self):
         invoiceFilename = buildInvoice(self.filename.get(), boxFile)
+        
         os.remove(self.filename.get())
         os.system(f'start excel {invoiceFilename}')
 

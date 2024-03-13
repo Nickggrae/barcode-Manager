@@ -24,12 +24,17 @@ invoiceToProcessed.py: converts invoice format to back to the processed format (
 
 need to add:
 1. Check if filename exists before it is sent to the sheet menu.
+2. files not closing properly before being deleted when the quit process runs and the invoice is generated.
+3. Check if scan is valid.
 4. Pull boxfilename and itemfilename from a sheet and make them configurable from the application
 5. make the font size comfigurable from the application
 6. make the application window resulation configurable from the application
 7. make the application start from the running of a single executable
 8. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
 9. when box isnt scanned first (send dirty message)
+
+3/12/2024
+1. made some smaller bug fixes and worked on how im going to change the program structure (this version will be archived)
 
 3/11/2024
 1. Added a global text size field which controlls the size of all text on the application. 

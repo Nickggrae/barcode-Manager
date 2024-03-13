@@ -107,6 +107,7 @@ def process (scannedItems, itemsFile, boxFile, inputFile=None):
         now = datetime.now()
         outputFilename = 'processed' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
         book.save(outputFilename)
+        book.close()
 
         retVal = outputFilename
     
