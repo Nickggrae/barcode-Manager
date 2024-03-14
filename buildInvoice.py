@@ -56,8 +56,6 @@ def getItemInfo(inputFile, boxFile):
         currItem = sheet.cell(row=i, column=3).value
         currItemBox = sheet.cell(row=i, column=1).value
 
-        print("currItem: " + currItem + "    currItemBox: " + currItemBox)
-
         #check if this item already has a record in the unique items array
         isDistinct = True
         j = 0

@@ -10,6 +10,8 @@ import pandas
 import os
 from buildInvoice import buildInvoice
 from invoiceToProcessed import invoiceToProcessed
+from datetime import datetime
+from processItems import process
 
 itemsFile = 'SKU-Source-File.xlsx' #file that holds the records of what items exist
 boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
@@ -55,6 +57,7 @@ class SheetMenu(tk.Frame):
         self.controller = controller #controller of the window
         self.selectedRowIndex = tk.StringVar() #used to pass the users input to the processing functions
         self.filename = tk.StringVar() #the filename of the book holding the scanned records
+        self.refreshes = 0
 
     #used when the page is loaded to refresh the displayed information
     def refresh(self, **kwargs):
@@ -65,21 +68,17 @@ class SheetMenu(tk.Frame):
         v = tk.Scrollbar(self)
         v.pack(side = "right", fill = "y")
 
-        filename = ""
         #get the user input if possible
-        filename = str(kwargs.get("processedFilename"))
+        if self.refreshes == 0:
+            filename = str(kwargs.get("processedFilename"))
+            self.filename.set(filename)
+            self.refreshes = 1
+        else:
+            filename = self.filename.get()
         
         t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Helvetica", fontSize))
 
-        #determine if the filename was input
-        if filename == "None":
-            filename = self.filename.get()
-        else:
-            self.filename.set(filename)
-
-        if filename[0] == 'i':
-            filename = invoiceToProcessed(filename)
-            self.filename.set(filename)
+        print("regular filename = " + filename)
 
         #determine how many records are in the file
         ds = pandas.read_excel(filename)
@@ -93,8 +92,8 @@ class SheetMenu(tk.Frame):
 
         #store all the box names into a list of strings
         i = 1
-        while i <= fileRows:
-            t.insert("end", str(i) + ": " + sheet.cell(row=i, column=1).value + ", " + sheet.cell(row=i, column=3).value + "\n")
+        while i < fileRows:
+            t.insert("end", str(i) + ": " + sheet.cell(row=i+1, column=1).value + ", " + sheet.cell(row=i+1, column=3).value + "\n")
             i += 1
 
         t.pack(side="left", fill="both", expand=True)
@@ -120,7 +119,6 @@ class SheetMenu(tk.Frame):
 
         sheet.delete_rows(int(selectedRowIndex))
 
-        book.save(filename)
         book.close()
 
         #update the page info
@@ -129,7 +127,26 @@ class SheetMenu(tk.Frame):
     #Start the scanning process on the existing file to append more records
     def append(self):
         filename = self.filename.get()
-        outputFilename = scanSheet(itemsFile, boxFile, filename)
+        
+        currentBox = ""
+        currentItem = ""
+        while True:
+            item = str(scanSheet()) #get the next scanned item
+
+            if item == "'/'": #make sure it was a barcode
+                break
+            else:
+                if item[0] == 'B':
+                    currentBox = item
+                else:
+                    currentItem = item
+                    if currentBox == "":
+                        print("No Box Associated with Item")
+                    else:
+                        process(filename, currentBox, currentItem, boxFile, itemsFile)
+                        currentItem = ""
+                        self.refresh()
+                        self.update()
         
         self.refresh()
 
@@ -165,9 +182,17 @@ class StartNewSheet(tk.Frame):
 
     #start the scanning process to be added to a newly created sheet, then open the sheet menu for the created sheet
     def startNewSheet(self):
-       outputFilename = scanSheet(itemsFile, boxFile)
-       print ("Output Filename: " + outputFilename)
-       self.controller.show_frame(SheetMenu, processedFilename=outputFilename)
+        #create the new file and open the file management window
+        book = openpyxl.Workbook()
+        sheet = book.active
+
+        now = datetime.now()
+        outputFilename = 'new' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
+
+        book.save(outputFilename)
+        book.close()
+        
+        self.controller.show_frame(SheetMenu, processedFilename=outputFilename)
 
     #end the program
     def quit(self):

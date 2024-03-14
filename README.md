@@ -33,6 +33,14 @@ need to add:
 8. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
 9. when box isnt scanned first (send dirty message)
 
+3/13/2024
+1. Made it so the barcode scanner function now only scans one item them returns to the menu the item.
+2. Now the processing of the scanned barcodes occur individually so the application can interact with each
+item as their scanned to show feedback to the user about their scanning. (So it doesnt work in transactions alike the last interation)
+3. Changed how the files are created and passed to the sheet menu so all scanning occurs after the files have been created. (This has
+inadvertently broken the invoice generation function for now)
+4. now if a item is scanned before a box is scanned it will be ignored.
+
 3/12/2024
 1. made some smaller bug fixes and worked on how im going to change the program structure (this version will be archived)
 
