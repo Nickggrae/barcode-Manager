@@ -49,8 +49,8 @@ def getItemInfo(inputFile, boxFile):
     book = openpyxl.load_workbook(inputFile)
     sheet = book.active
 
-    #store all the box names into a list of strings
-    i = 1
+    #for each item in the processed file
+    i = 2
     while i <= fileRows:
         #grab the first items FNSKU and its corresponding box
         currItem = sheet.cell(row=i, column=3).value
@@ -79,18 +79,6 @@ def getItemInfo(inputFile, boxFile):
         i += 1
 
     book.close()
-
-    #print the uniqueItems and itemsBoxes array info to console for testing
-    i = 0
-    for item in uniqueItems:
-        print(str(i) + ": " + item)
-        i += 1
-
-    i = 0
-    for box in itemsBoxes:
-        print(str(i) + ": ")
-        print(box)
-        i += 1
 
     return uniqueItems, itemsBoxes, boxes
 
@@ -180,6 +168,7 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
         
         i += 1 #increment to next unqiue item index
     
+    inBook.close()
     
     #color empty cells
     for b in range(1, 7 + len(boxes)):
@@ -243,12 +232,6 @@ def generateInvoice(uniqueItems, itemsBoxes, inputFile, boxes):
     # Set column width based on the maximum length of text
     for column, maxLen in columnMaxLen.items():
         sheet.column_dimensions[sheet.cell(row=1, column=column).column_letter].width = maxLen
-
-    
-
-
-    inBook.close()
-    #sheet.cell(row=i, column=j, value=part)
 
 
     #generate a name for the invoice and save the file

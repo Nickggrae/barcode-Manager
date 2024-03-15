@@ -13,13 +13,13 @@ Now to end the scanning you need to input '/' which will end the scanning.
 
 menu.py: the driver program for the GUI.
 
-barcode.py: the driver program for the barcode scanning loop (keylogger).
+barcode.py: the driver program for the barcode scanning (keylogger).
 
-processItems.py: run after the barcode loop is exited to process the items scanned and configure the sheet.
+processItems.py: adds a scanned item to a processed sheet.
 
 buildInvoice.py: will be run when the user closes the program to turn the working processed item list into the final invoice format.
 
-invoiceToProcessed.py: converts invoice format to back to the processed format (just a light of all the items data).
+invoiceToProcessed.py: converts invoice format to back to the processed format (just a list of all the items data).
 
 
 need to add:
@@ -31,7 +31,18 @@ need to add:
 6. make the application window resulation configurable from the application
 7. make the application start from the running of a single executable
 8. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
-9. when box isnt scanned first (send dirty message)
+9. Add back buttons rather than having to quit to go back 
+10. add label showing to press "/" to end the scanning process
+11. add note to application window when item is added with no box
+
+
+
+3/14/2024
+1. fixed build invoice to function with the new process file creation.
+2. fixed exit response from barcode loop causing menu to crash from blank response.
+3. Now the current box during the scan is shown on the sheet menu.
+4. optimized the file operations
+
 
 3/13/2024
 1. Made it so the barcode scanner function now only scans one item them returns to the menu the item.

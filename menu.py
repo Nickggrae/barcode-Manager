@@ -58,6 +58,7 @@ class SheetMenu(tk.Frame):
         self.selectedRowIndex = tk.StringVar() #used to pass the users input to the processing functions
         self.filename = tk.StringVar() #the filename of the book holding the scanned records
         self.refreshes = 0
+        self.currentBox = "None"
 
     #used when the page is loaded to refresh the displayed information
     def refresh(self, **kwargs):
@@ -67,6 +68,7 @@ class SheetMenu(tk.Frame):
 
         v = tk.Scrollbar(self)
         v.pack(side = "right", fill = "y")
+        filename = ""
 
         #get the user input if possible
         if self.refreshes == 0:
@@ -75,10 +77,13 @@ class SheetMenu(tk.Frame):
             self.refreshes = 1
         else:
             filename = self.filename.get()
+
+        if filename[0] == 'i':
+            print("invoicetoprocessed ran")
+            filename = invoiceToProcessed(filename)
+            self.filename.set(filename)
         
         t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Helvetica", fontSize))
-
-        print("regular filename = " + filename)
 
         #determine how many records are in the file
         ds = pandas.read_excel(filename)
@@ -90,7 +95,7 @@ class SheetMenu(tk.Frame):
         book = openpyxl.load_workbook(filename)
         sheet = book.active
 
-        #store all the box names into a list of strings
+        #add the items from the processed file to the application frame
         i = 1
         while i < fileRows:
             t.insert("end", str(i) + ": " + sheet.cell(row=i+1, column=1).value + ", " + sheet.cell(row=i+1, column=3).value + "\n")
@@ -107,18 +112,24 @@ class SheetMenu(tk.Frame):
         tk.Button(self, text="Delete", font=("Helvetica", fontSize), command=self.delete).pack(anchor="center")
         tk.Button(self, text="Add More", font=("Helvetica", fontSize), command=self.append).pack(anchor="center")
         tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
+        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Current Box:", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text=self.currentBox, font=("Helvetica", fontSize)).pack(anchor="center")
 
     #delete a record from the sheet based on user input and refresh the page
     def delete(self):
         selectedRowIndex = self.selectedRowIndex.get()
         filename = self.filename.get()
 
+        print("delete filename: " + filename)
+        print("row number: " + selectedRowIndex)
         #Open the sheet and delete the row based on the users input 
         book = openpyxl.load_workbook(filename)
         sheet = book.active
 
-        sheet.delete_rows(int(selectedRowIndex))
+        sheet.delete_rows(int(selectedRowIndex) + 1)
 
+        book.save(filename)
         book.close()
 
         #update the page info
@@ -133,11 +144,12 @@ class SheetMenu(tk.Frame):
         while True:
             item = str(scanSheet()) #get the next scanned item
 
-            if item == "'/'": #make sure it was a barcode
+            if item == "'/'" or item == "": #make sure it was a barcode
                 break
             else:
                 if item[0] == 'B':
                     currentBox = item
+                    self.currentBox = currentBox
                 else:
                     currentItem = item
                     if currentBox == "":
@@ -145,9 +157,10 @@ class SheetMenu(tk.Frame):
                     else:
                         process(filename, currentBox, currentItem, boxFile, itemsFile)
                         currentItem = ""
-                        self.refresh()
-                        self.update()
+                self.refresh()
+                self.update()
         
+        self.currentBox = "None"
         self.refresh()
 
     #end the program

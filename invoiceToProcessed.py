@@ -34,11 +34,11 @@ def invoiceToProcessed(invoiceFilename):
             if (tempCellVal != None):
                 z = 0
                 while z < int(tempCellVal):
-                    sheet.cell(row=instanceCount, column=1, value=invoiceSheet.cell(row=5, column=7 + j).value)
-                    sheet.cell(row=instanceCount, column=2, value=invoiceSheet.cell(row=i + 6, column=1).value)
-                    sheet.cell(row=instanceCount, column=3, value=invoiceSheet.cell(row=i + 6, column=2).value)
-                    sheet.cell(row=instanceCount, column=4, value=invoiceSheet.cell(row=i + 6, column=3).value)
-                    sheet.cell(row=instanceCount, column=5, value=invoiceSheet.cell(row=i + 6, column=4).value)
+                    sheet.cell(row=instanceCount + 1, column=1, value=invoiceSheet.cell(row=5, column=7 + j).value)
+                    sheet.cell(row=instanceCount + 1, column=2, value=invoiceSheet.cell(row=i + 6, column=1).value)
+                    sheet.cell(row=instanceCount + 1, column=3, value=invoiceSheet.cell(row=i + 6, column=2).value)
+                    sheet.cell(row=instanceCount + 1, column=4, value=invoiceSheet.cell(row=i + 6, column=3).value)
+                    sheet.cell(row=instanceCount + 1, column=5, value=invoiceSheet.cell(row=i + 6, column=4).value)
                     instanceCount += 1
                     z += 1
             j += 1
