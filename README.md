@@ -11,6 +11,16 @@ The purpose of this program is to allow for easy documentation of the items scan
 
 Now to end the scanning you need to input '/' which will end the scanning.
 
+
+main branch (uses AMZN generated file)
+
+menu.py: the driver program for the GUI.
+
+barcode.py: the driver program for the barcode scanning (keylogger).
+
+
+file-self-creation-mode Branch
+
 menu.py: the driver program for the GUI.
 
 barcode.py: the driver program for the barcode scanning (keylogger).
@@ -36,6 +46,9 @@ need to add:
 11. add note to application window when item is added with no box
 
 
+3/16/2024
+1. started branch so main can be used to focus on working from the amazon file which changes the basic functionality of the program. For this reason its easier to start with just the barcode.py and menu.py.
+2. Create fileOperations.py to now preform some of the previous read and write operations but its a work in progress.
 
 3/14/2024
 1. fixed build invoice to function with the new process file creation.
