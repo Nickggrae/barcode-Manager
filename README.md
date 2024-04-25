@@ -35,7 +35,9 @@ need to add:
 10. add label showing to press "/" to end the scanning process
 11. add note to application window when item is added with no box
 
-
+4/25/2024
+1. Though attempting to create the version of the program that dirctly changed the amazon file I found a simplier way to create the invoice file. So I am going to take these file operations and make them work with the file self creation mode since the direct mode isnt possible as the amazon file has a password proteciton which was causing issues.
+2. Copy init takes the amazon file and configures the working sheet so it has all of the modularity features that the amazon sheet has, and it labeled in the same way so when you are done the item matrix can be copied over to the amazon file.
 
 3/14/2024
 1. fixed build invoice to function with the new process file creation.

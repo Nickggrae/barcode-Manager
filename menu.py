@@ -8,13 +8,7 @@ from barcode import scanSheet
 import openpyxl
 import pandas
 import os
-from buildInvoice import buildInvoice
-from invoiceToProcessed import invoiceToProcessed
 from datetime import datetime
-from processItems import process
-
-itemsFile = 'SKU-Source-File.xlsx' #file that holds the records of what items exist
-boxFile = 'boxes2-16-24.xlsx' #filename of the file that holds all the used box FNSKUs
 
 fontSize = 15
 
@@ -78,10 +72,6 @@ class SheetMenu(tk.Frame):
         else:
             filename = self.filename.get()
 
-        if filename[0] == 'i':
-            print("invoicetoprocessed ran")
-            filename = invoiceToProcessed(filename)
-            self.filename.set(filename)
         
         t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Helvetica", fontSize))
 
@@ -173,80 +163,6 @@ class SheetMenu(tk.Frame):
         self.controller.quit()
 
 
-
-
-#Page that lets you start the scanning process for a new sheet
-class StartNewSheet(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller #controller of the window
-
-    #refresh the page information 
-    def refresh(self):
-        #delete the previous window information
-        for widget in self.winfo_children():
-            widget.destroy()
-
-        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="Empty Start New Sheet?", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Button(self, text="Start Scan", font=("Helvetica", fontSize), command=self.startNewSheet).pack(anchor="center")
-        tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
-
-    #start the scanning process to be added to a newly created sheet, then open the sheet menu for the created sheet
-    def startNewSheet(self):
-        #create the new file and open the file management window
-        book = openpyxl.Workbook()
-        sheet = book.active
-
-        now = datetime.now()
-        outputFilename = 'new' + str(now.strftime("%m-%d-%H-%M")) + '.xlsx'
-
-        book.save(outputFilename)
-        book.close()
-        
-        self.controller.show_frame(SheetMenu, processedFilename=outputFilename)
-
-    #end the program
-    def quit(self):
-       self.controller.quit()
-
-
-
-#The beginning menu where you can decide to start a new sheet or work off an existing one.
-class Menu(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller #controller of the window
-
-    #refresh the information presented on the page
-    def refresh(self):
-        #delete the previous window information 
-        for widget in self.winfo_children():
-            widget.destroy()
-
-        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="Would You Like To Do?", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Button(self, text="Start a New Sheet", font=("Helvetica", fontSize), command=self.startNewSheet).pack(anchor="center")
-        tk.Button(self, text="Use Existing Sheet", font=("Helvetica", fontSize), command=self.useExistingSheet).pack(anchor="center")
-
-        tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
-
-    #open the start new sheet menu
-    def startNewSheet(self):
-        self.controller.show_frame(StartNewSheet)
-
-    #open the use an existing sheet menu
-    def useExistingSheet(self):
-        self.controller.show_frame(GetFilename)
-
-
-    #end the program
-    def quit(self):
-        self.controller.quit()
-
-
 #master class for the application
 class Application(tk.Tk):
     #initalize the application window and set the basic setting
@@ -259,13 +175,13 @@ class Application(tk.Tk):
 
         self.frames = {}
         #initalize which frames exist
-        for F in (Menu, StartNewSheet, SheetMenu, GetFilename):
+        for F in (SheetMenu, GetFilename):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
         #the first frame to open on startup
-        self.show_frame(Menu)
+        self.show_frame(GetFilename)
 
     #function for switching between frames
     def show_frame(self, cont, **kwargs):
