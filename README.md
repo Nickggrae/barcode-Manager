@@ -23,6 +23,8 @@ invoiceToProcessed.py: converts invoice format to back to the processed format (
 
 
 need to add:
+1. Reformat the creation file
+
 1. Check if filename exists before it is sent to the sheet menu.
 2. files not closing properly before being deleted when the quit process runs and the invoice is generated.
 3. Check if scan is valid.
@@ -34,6 +36,10 @@ need to add:
 9. Add back buttons rather than having to quit to go back 
 10. add label showing to press "/" to end the scanning process
 11. add note to application window when item is added with no box
+
+5/20/2024
+1. finished file creation from origional amazon file.
+2. fixed some problems with opening the amazon file from the menu.
 
 4/25/2024
 1. Though attempting to create the version of the program that dirctly changed the amazon file I found a simplier way to create the invoice file. So I am going to take these file operations and make them work with the file self creation mode since the direct mode isnt possible as the amazon file has a password proteciton which was causing issues.

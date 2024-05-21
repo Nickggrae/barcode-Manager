@@ -32,6 +32,14 @@ def copyInit(azFile):
     sheet.cell(row=1, column=1).value = "Box #:"
     sheet.cell(row=1, column=2).value = boxCount
 
+    #Put the Total Item Counter and Label
+    sheet.cell(row=1, column=3).value = "Total Item:"
+    sheet.cell(row=1, column=4).value = "=COUNTA(A:A)-2"
+
+    #Put the Total Item Instance Counter and Label
+    sheet.cell(row=1, column=5).value = "Total Item Instances:"
+    sheet.cell(row=1, column=6).value = "=SUM(K:K)"
+
     #copy the colum labels 
     i = 1
     while i < 12:
@@ -55,7 +63,6 @@ def copyInit(azFile):
         sheet.cell(row=2, column=i + 12).value = '=IF(B1>=' + str(i) + ', "Box ' + str(i) + ' quantity","")'
         i += 1
 
-
     #close the amazon sheet
     azBook.close()
 
@@ -68,12 +75,5 @@ def copyInit(azFile):
 
     #return the filename so it can be accessed by the other funtions 
     return outputFilename
-
-
-
-
-
-
-
 
 copyInit("2024-03-13_02-17-15_pack-group-1_99e4d13a-e977-4009-adb0-5ff8d8457be5.xlsx")

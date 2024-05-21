@@ -25,6 +25,7 @@ class GetFilename(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
+        tk.Label(self, text="Please Enter The Amazon Sheet", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Enter Filename: ", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Entry(self, textvariable=self.filename, font=("Helvetica", fontSize)).pack(anchor="center")
@@ -85,11 +86,31 @@ class SheetMenu(tk.Frame):
         book = openpyxl.load_workbook(filename)
         sheet = book.active
 
-        #add the items from the processed file to the application frame
-        i = 1
-        while i < fileRows:
-            t.insert("end", str(i) + ": " + sheet.cell(row=i+1, column=1).value + ", " + sheet.cell(row=i+1, column=3).value + "\n")
+        #Get the current number of boxes in the sheet.
+        currentBoxNum = str(sheet.cell(row=4, column=1).value)
+
+        #Get the number of item records
+        currentItemNum = str(sheet.cell(row=4, column=1).value)
+
+
+
+        i = 3
+        while (i < (3 + currentItemNum)):
+            j = 13
+            while (j < (13 + currentBoxNum)):
+                
+                j += 1
+            
             i += 1
+
+
+        #add the items from the processed file to the application frame
+        # print("Filerows: " + str(fileRows))
+        # i = 1
+        # while (i+5) < (fileRows-7):
+        #     print("row: " + str(i+5) + ",     column: 1 or 3")
+        #     t.insert("end", str(i) + ": " + sheet.cell(row=i+5, column=1).value + ", " + sheet.cell(row=i+5, column=3).value + "\n")
+        #     i += 1
 
         t.pack(side="left", fill="both", expand=True)
         v.config(command=t.yview)
@@ -145,7 +166,7 @@ class SheetMenu(tk.Frame):
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
-                        process(filename, currentBox, currentItem, boxFile, itemsFile)
+                        process(filename, currentBox, currentItem)
                         currentItem = ""
                 self.refresh()
                 self.update()
