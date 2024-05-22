@@ -63,6 +63,13 @@ def copyInit(azFile):
         sheet.cell(row=2, column=i + 12).value = '=IF(B1>=' + str(i) + ', "Box ' + str(i) + ' quantity","")'
         i += 1
 
+    #Add the boxed quantity formula so it dynamically counts the amount of item instances for each item record
+    print("Max Rows: " + str(maxRows))
+    i = 3
+    while i < maxRows:
+        sheet.cell(row=i, column=11).value = '=SUM(M' + str(i) + ':OFFSET(M' + str(i) + ', 0, B1-1))'
+        i += 1
+
     #close the amazon sheet
     azBook.close()
 
@@ -76,4 +83,30 @@ def copyInit(azFile):
     #return the filename so it can be accessed by the other funtions 
     return outputFilename
 
-copyInit("2024-03-13_02-17-15_pack-group-1_99e4d13a-e977-4009-adb0-5ff8d8457be5.xlsx")
+#for each new item given the working file and the box its supposed to go into update the item instance matrix in the given file.
+def appendNewItem(filename, currentBox, currentItem):
+    book = openpyxl.load_workbook(filename)
+    sheet = book.active
+
+    currentItemNum = str(sheet.cell(row=1, column=4).value)
+    currentBoxNum = int(currentBox[9])
+
+    i = 1
+    while i < int(currentItemNum):
+        indexedItem = str(sheet.cell(row=i + 2, column=1).value)
+        if indexedItem == currentItem:
+            print("i: " + str(i))
+            if sheet.cell(row=i + 2, column=13 + currentBoxNum).value == None:
+                sheet.cell(row=i + 2, column=13 + currentBoxNum).value = 1
+            else:
+                sheet.cell(row=i + 2, column=13 + currentBoxNum).value = int(sheet.cell(row=i + 2, column=13 + currentBoxNum).value) + 1
+
+        i += 1
+
+    book.save()
+    book.close()
+
+
+
+appendNewItem("copiedSheet05-21-16-33.xlsx", "BOX0000001", "PPB-Kin-Hick-BBQ-2pk-3Lid")
+#copyInit("2024-03-13_02-17-15_pack-group-1_99e4d13a-e977-4009-adb0-5ff8d8457be5.xlsx")

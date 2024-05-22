@@ -37,6 +37,11 @@ need to add:
 10. add label showing to press "/" to end the scanning process
 11. add note to application window when item is added with no box
 
+5/21/2024
+1. Added the boxed quantity formula to the created file so it dynamically counts the amount of item instances for each item record
+2. Fixed the Sheet menu update function to Reads in the values from the current working sheet to display the current item instances in the menu
+3. Added the file operation (appendNewItem) to update the file instance matrix in the working file when a new item is scanned when asscoaited with a box.
+
 5/20/2024
 1. finished file creation from origional amazon file.
 2. fixed some problems with opening the amazon file from the menu.

@@ -5,6 +5,7 @@
 
 import tkinter as tk
 from barcode import scanSheet
+from fileOperations import appendNewItem
 import openpyxl
 import pandas
 import os
@@ -93,24 +94,17 @@ class SheetMenu(tk.Frame):
         currentItemNum = str(sheet.cell(row=4, column=1).value)
 
 
-
+        #Reads in the values from the current working sheet to display the current item instances in the menu
         i = 3
         while (i < (3 + currentItemNum)):
             j = 13
             while (j < (13 + currentBoxNum)):
-                
+                if sheet.cell(row=i, column=j).value is not None:
+                    t.insert("end", str(i-2) + ": " + sheet.cell(row=i, column=1).value + ", " + sheet.cell(row=i, column=3).value + "\n")
+
                 j += 1
             
             i += 1
-
-
-        #add the items from the processed file to the application frame
-        # print("Filerows: " + str(fileRows))
-        # i = 1
-        # while (i+5) < (fileRows-7):
-        #     print("row: " + str(i+5) + ",     column: 1 or 3")
-        #     t.insert("end", str(i) + ": " + sheet.cell(row=i+5, column=1).value + ", " + sheet.cell(row=i+5, column=3).value + "\n")
-        #     i += 1
 
         t.pack(side="left", fill="both", expand=True)
         v.config(command=t.yview)
@@ -132,18 +126,7 @@ class SheetMenu(tk.Frame):
         selectedRowIndex = self.selectedRowIndex.get()
         filename = self.filename.get()
 
-        print("delete filename: " + filename)
-        print("row number: " + selectedRowIndex)
-        #Open the sheet and delete the row based on the users input 
-        book = openpyxl.load_workbook(filename)
-        sheet = book.active
-
-        sheet.delete_rows(int(selectedRowIndex) + 1)
-
-        book.save(filename)
-        book.close()
-
-        #update the page info
+        
         self.refresh()
 
     #Start the scanning process on the existing file to append more records
@@ -166,7 +149,7 @@ class SheetMenu(tk.Frame):
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
-                        process(filename, currentBox, currentItem)
+                        appendNewItem(filename, currentBox, currentItem)
                         currentItem = ""
                 self.refresh()
                 self.update()
@@ -176,11 +159,6 @@ class SheetMenu(tk.Frame):
 
     #end the program
     def quit(self):
-        invoiceFilename = buildInvoice(self.filename.get(), boxFile)
-        
-        os.remove(self.filename.get())
-        os.system(f'start excel {invoiceFilename}')
-
         self.controller.quit()
 
 
