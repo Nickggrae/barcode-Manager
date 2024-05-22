@@ -24,6 +24,8 @@ invoiceToProcessed.py: converts invoice format to back to the processed format (
 
 need to add:
 1. Reformat the creation file
+2. delete function input functions
+
 
 1. Check if filename exists before it is sent to the sheet menu.
 2. files not closing properly before being deleted when the quit process runs and the invoice is generated.
@@ -36,6 +38,13 @@ need to add:
 9. Add back buttons rather than having to quit to go back 
 10. add label showing to press "/" to end the scanning process
 11. add note to application window when item is added with no box
+
+5/22/2024
+1. Created the delteRecord file operation function to take in the list of items pulled from the file in the Sheet Menu update and the user input item to delete and makes the change in the file.
+2. Fixed indexing error in the appendNewItem function.
+3. Updated the GetFilename screen to differentiate between and amazon file and changed file. Then decide to use the copyInit function and pass the filename to the SheetMenu according to the input.
+4. Modified the sheet menu page to utilize the file operations.
+5.
 
 5/21/2024
 1. Added the boxed quantity formula to the created file so it dynamically counts the amount of item instances for each item record

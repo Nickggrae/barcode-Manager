@@ -6,10 +6,10 @@
 import tkinter as tk
 from barcode import scanSheet
 from fileOperations import appendNewItem
+from fileOperations import deleteRecord
+from fileOperations import copyInit
 import openpyxl
 import pandas
-import os
-from datetime import datetime
 
 fontSize = 15
 
@@ -26,7 +26,7 @@ class GetFilename(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
-        tk.Label(self, text="Please Enter The Amazon Sheet", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Please Enter The Amazon Sheet or Copied Working Sheet", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Enter Filename: ", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Entry(self, textvariable=self.filename, font=("Helvetica", fontSize)).pack(anchor="center")
@@ -34,11 +34,15 @@ class GetFilename(tk.Frame):
         tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
 
-
     #Start the scanning process on the existing file to append more records
     def submit(self):
         filename = self.filename.get()
-        self.controller.show_frame(SheetMenu, processedFilename=filename)
+        
+        if filename[0] != 'c' and filename[0] != 'o':
+            newFile = copyInit(filename)
+            self.controller.show_frame(SheetMenu, processedFilename=newFile)
+        else:
+            self.controller.show_frame(SheetMenu, processedFilename=filename)
 
     #end the program
     def quit(self):
@@ -55,6 +59,7 @@ class SheetMenu(tk.Frame):
         self.filename = tk.StringVar() #the filename of the book holding the scanned records
         self.refreshes = 0
         self.currentBox = "None"
+        self.currentItemList = []
 
     #used when the page is loaded to refresh the displayed information
     def refresh(self, **kwargs):
@@ -74,12 +79,7 @@ class SheetMenu(tk.Frame):
         else:
             filename = self.filename.get()
 
-        
         t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Helvetica", fontSize))
-
-        #determine how many records are in the file
-        ds = pandas.read_excel(filename)
-        fileRows = ds.shape[0] + 1
 
         t.insert("end", "-----------------------------------------\n")
         
@@ -88,20 +88,28 @@ class SheetMenu(tk.Frame):
         sheet = book.active
 
         #Get the current number of boxes in the sheet.
-        currentBoxNum = str(sheet.cell(row=4, column=1).value)
+        currentBoxNum = str(sheet.cell(row=1, column=2).value)
 
         #Get the number of item records
-        currentItemNum = str(sheet.cell(row=4, column=1).value)
+        ds = pandas.read_excel(filename)
+        fileRows = ds.shape[0] + 1
+        currentItemNum = fileRows - 2
 
+        #list of current items records pulled from the file
+        currentItemList = []
 
         #Reads in the values from the current working sheet to display the current item instances in the menu
         i = 3
         while (i < (3 + currentItemNum)):
             j = 13
-            while (j < (13 + currentBoxNum)):
+            while (j < (13 + int(currentBoxNum))):
                 if sheet.cell(row=i, column=j).value is not None:
-                    t.insert("end", str(i-2) + ": " + sheet.cell(row=i, column=1).value + ", " + sheet.cell(row=i, column=3).value + "\n")
-
+                    #get the value of the cell and add the corresponding amount of records
+                    z = int(sheet.cell(row=i, column=j).value)
+                    while z > 0:
+                        currentItemList.append(["BOX000000" + str(j - 12), sheet.cell(row=i, column=5).value])
+                        t.insert("end", str(len(currentItemList)) + ": " + "BOX000000" + str(j - 12) + ", " + sheet.cell(row=i, column=5).value + "\n")
+                        z -= 1
                 j += 1
             
             i += 1
@@ -110,6 +118,9 @@ class SheetMenu(tk.Frame):
         v.config(command=t.yview)
 
         book.close()
+
+        #set currentItemList of window object so i can be accessed by the delete function
+        self.currentItemList = currentItemList
 
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Select Row: ", font=("Helvetica", fontSize)).pack(anchor="center")
@@ -123,10 +134,7 @@ class SheetMenu(tk.Frame):
 
     #delete a record from the sheet based on user input and refresh the page
     def delete(self):
-        selectedRowIndex = self.selectedRowIndex.get()
-        filename = self.filename.get()
-
-        
+        deleteRecord(self.filename.get(), self.selectedRowIndex.get(), self.currentItemList)
         self.refresh()
 
     #Start the scanning process on the existing file to append more records
@@ -149,6 +157,7 @@ class SheetMenu(tk.Frame):
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
+                        print("currentBox " + currentBox + ", currentItem: " + currentItem)
                         appendNewItem(filename, currentBox, currentItem)
                         currentItem = ""
                 self.refresh()
@@ -187,8 +196,6 @@ class Application(tk.Tk):
         frame = self.frames[cont]
         frame.refresh(**kwargs)
         frame.tkraise()
-
-
 
 
 
