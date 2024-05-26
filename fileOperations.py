@@ -30,11 +30,11 @@ def copyInit(azFile):
     maxRows = int(totalSku[2]) + 3
 
     #Put the box value in the working sheet
-    sheet.cell(row=1, column=1).value = "Box #:"
+    sheet.cell(row=1, column=1).value = "Total Box(s):"
     sheet.cell(row=1, column=2).value = boxCount
 
     #Put the Total Item Counter and Label
-    sheet.cell(row=1, column=3).value = "Total Item:"
+    sheet.cell(row=1, column=3).value = "Total Item(s):"
     sheet.cell(row=1, column=4).value = "=COUNTA(A:A)-2"
 
     #Put the Total Item Instance Counter and Label
@@ -61,7 +61,7 @@ def copyInit(azFile):
     #23 for 10 box maximum
     i = 1
     while i < 10:
-        sheet.cell(row=2, column=i + 12).value = '=IF(B1>=' + str(i) + ', "Box ' + str(i) + ' quantity","")'
+        sheet.cell(row=2, column=i + 12).value = '=IF(B1>=' + str(i) + ', "Box ' + str(i) + '","")'
         i += 1
 
     #Add the boxed quantity formula so it dynamically counts the amount of item instances for each item record
@@ -71,8 +71,28 @@ def copyInit(azFile):
         sheet.cell(row=i, column=11).value = '=SUM(M' + str(i) + ':OFFSET(M' + str(i) + ', 0, B1-1))'
         i += 1
 
+    #shorten the header for expected and boxed quantity purly for looks
+    sheet.cell(row=2, column=10).value = 'Expected'
+    sheet.cell(row=2, column=11).value = 'Boxed'
+
     #close the amazon sheet
     azBook.close()
+
+    #resize all of the cells to make all of the cell values visable
+    i = 1
+    for column in sheet.columns:
+        if i == 1 or i == 3 or i == 4 or i == 5 or i == 10:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            sheet.column_dimensions[column[0].column_letter].width = adjusted_width
+        i += 1
 
     #name the working sheet, save it and close it.
     now = datetime.now()
@@ -119,20 +139,21 @@ def deleteRecord(filename, selectedRowIndex, currentItemList):
         ds = pandas.read_excel(filename)
         fileRows = ds.shape[0] + 1
         currentItemNum = fileRows - 2
+        inputIndex = int(selectedRowIndex)
 
         book = openpyxl.load_workbook(filename)
         sheet = book.active
         
-        item = str(currentItemList[selectedRowIndex - 1][1])
+        item = str(currentItemList[inputIndex - 1][1])
         print("Item: " + item)
-        boxNum = int(currentItemList[selectedRowIndex - 1][0][9])
+        boxNum = int(currentItemList[inputIndex - 1][0][9])
 
         i = 3
         while i < currentItemNum:
             if sheet.cell(row=i, column=5).value == item:
                 if (sheet.cell(row=i, column=12 + boxNum).value - 1) == 0:
                     sheet.cell(row=i, column=12 + boxNum).value = None
-                else:    
+                else:
                     sheet.cell(row=i, column=12 + boxNum).value = sheet.cell(row=i, column=12 + boxNum).value - 1
             i += 1
 

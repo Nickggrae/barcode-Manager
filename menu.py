@@ -10,6 +10,7 @@ from fileOperations import deleteRecord
 from fileOperations import copyInit
 import openpyxl
 import pandas
+import os
 
 fontSize = 15
 
@@ -131,6 +132,23 @@ class SheetMenu(tk.Frame):
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Current Box:", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text=self.currentBox, font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Now you are editing the created file directly", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Press Add More to enter *Scanning Mode*", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="When in *Scanning Mode* you can scan a ", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="box then all the items for that box", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="You can scan a new box to change the", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="current box and then continue scanning items", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="To leave *Scanning Mode* Press '/'", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="If you need to reenter Scanning Mode just", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="press Add More again.", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="If you click outside the program window", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="while in scanning mode it will become", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="non-responsive just click on any other", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="program and press '/' to leave *Scanning Mode*", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="To delete a record type the index number", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Listed in the input box and press delete", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="To end the program press the quit button", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="This will open the working file for you to see", font=("Helvetica", fontSize)).pack(anchor="center")
 
     #delete a record from the sheet based on user input and refresh the page
     def delete(self):
@@ -168,6 +186,7 @@ class SheetMenu(tk.Frame):
 
     #end the program
     def quit(self):
+        os.system(f'start excel {self.filename.get()}')
         self.controller.quit()
 
 
@@ -201,5 +220,5 @@ class Application(tk.Tk):
 
 if __name__ == "__main__":
     app = Application()
-    app.geometry("1000x600")
+    app.geometry("1000x800")
     app.mainloop()

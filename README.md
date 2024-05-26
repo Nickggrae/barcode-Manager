@@ -39,6 +39,11 @@ need to add:
 10. add label showing to press "/" to end the scanning process
 11. add note to application window when item is added with no box
 
+5/25/2024
+1. Fixed the delete function for the Sheet menu so it gets the input in the correct format to inturrput it.
+2. Added instructions to the Sheet Menu.
+3. fixed the change sheet format to show all of the cell values fully when its created.
+
 5/22/2024
 1. Created the delteRecord file operation function to take in the list of items pulled from the file in the Sheet Menu update and the user input item to delete and makes the change in the file.
 2. Fixed indexing error in the appendNewItem function.
