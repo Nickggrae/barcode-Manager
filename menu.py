@@ -130,6 +130,8 @@ class SheetMenu(tk.Frame):
         tk.Button(self, text="Add More", font=("Helvetica", fontSize), command=self.append).pack(anchor="center")
         tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Current Box Count: " + currentBoxNum, font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Button(self, text="Add Box", font=("Helvetica", fontSize), command=self.addBox).pack(anchor="center")
         tk.Label(self, text="Current Box:", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text=self.currentBox, font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Now you are editing the created file directly", font=("Helvetica", fontSize)).pack(anchor="center")
@@ -184,6 +186,21 @@ class SheetMenu(tk.Frame):
         self.currentBox = "None"
         self.refresh()
 
+    #Increments the total boxes value in the working sheet
+    def addBox(self):
+        filename = self.filename.get()
+        
+        #open the book for reading the lines
+        book = openpyxl.load_workbook(filename)
+        sheet = book.active
+
+        sheet.cell(row=1, column=2).value = int(sheet.cell(row=1, column=2).value) + 1
+        
+        book.save(filename)
+        book.close()
+        
+        self.refresh()
+
     #end the program
     def quit(self):
         os.system(f'start excel {self.filename.get()}')
@@ -220,5 +237,5 @@ class Application(tk.Tk):
 
 if __name__ == "__main__":
     app = Application()
-    app.geometry("1000x800")
+    app.geometry("1000x900")
     app.mainloop()

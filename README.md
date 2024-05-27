@@ -39,6 +39,11 @@ need to add:
 10. add label showing to press "/" to end the scanning process
 11. add note to application window when item is added with no box
 
+5/26/2024
+1. Added new function to Sheet Menu to increment the Box number in the sheet.
+2. Added the Box Number counter to the refresh function in Sheet Menu and a button to call the increment function.
+3. Fixed the formatting and window size to fit all of the contents on the window at startup.
+
 5/25/2024
 1. Fixed the delete function for the Sheet menu so it gets the input in the correct format to inturrput it.
 2. Added instructions to the Sheet Menu.
