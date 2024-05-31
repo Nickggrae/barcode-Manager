@@ -22,22 +22,24 @@ buildInvoice.py: will be run when the user closes the program to turn the workin
 invoiceToProcessed.py: converts invoice format to back to the processed format (just a list of all the items data).
 
 
-need to add:
-1. Reformat the creation file
-2. delete function input functions
+need to add: (Pressing Matters)
+1. find way to stop crashing from leaving window while in scan mode
+2. run in different process menu and scan
+3. play a sound when a item is added
 
 
-1. Check if filename exists before it is sent to the sheet menu.
-2. files not closing properly before being deleted when the quit process runs and the invoice is generated.
-3. Check if scan is valid.
-4. Pull boxfilename and itemfilename from a sheet and make them configurable from the application
-5. make the font size comfigurable from the application
-6. make the application window resulation configurable from the application
-7. make the application start from the running of a single executable
-8. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
-9. Add back buttons rather than having to quit to go back 
-10. add label showing to press "/" to end the scanning process
-11. add note to application window when item is added with no box
+need to add: (Luxaries)
+1. make the font size comfigurable from the application
+2. make the application window resulation configurable from the application
+3. make the application start from the running of a single executable
+4. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
+5. Add back buttons rather than having to quit to go back to the menu
+6. add note to application window when item is added with no box
+
+
+5/27/2024
+1. Extended the sleep period of the scanner.
+2. Now screen menu update directly reads the values from the tables and shows the contents in the menu in a table format to make it understandable.
 
 5/26/2024
 1. Added new function to Sheet Menu to increment the Box number in the sheet.

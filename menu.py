@@ -80,7 +80,7 @@ class SheetMenu(tk.Frame):
         else:
             filename = self.filename.get()
 
-        t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Helvetica", fontSize))
+        t = tk.Text(self, width = 15, height = 15, wrap = "none", yscrollcommand = v.set, font=("Courier", fontSize))
 
         t.insert("end", "-----------------------------------------\n")
         
@@ -99,20 +99,44 @@ class SheetMenu(tk.Frame):
         #list of current items records pulled from the file
         currentItemList = []
 
-        #Reads in the values from the current working sheet to display the current item instances in the menu
-        i = 3
-        while (i < (3 + currentItemNum)):
-            j = 13
-            while (j < (13 + int(currentBoxNum))):
-                if sheet.cell(row=i, column=j).value is not None:
-                    #get the value of the cell and add the corresponding amount of records
-                    z = int(sheet.cell(row=i, column=j).value)
-                    while z > 0:
-                        currentItemList.append(["BOX000000" + str(j - 12), sheet.cell(row=i, column=5).value])
-                        t.insert("end", str(len(currentItemList)) + ": " + "BOX000000" + str(j - 12) + ", " + sheet.cell(row=i, column=5).value + "\n")
-                        z -= 1
-                j += 1
+        #labels for the displayed matrix
+        t.insert("end", "Item                             |")
+        i = 1
+        while i <= int(currentBoxNum):
+            t.insert("end", "B" + str(i) + "|")
+            i += 1
+
+        t.insert("end", "\n")
+
+        #fill in the items and their current recorded values from the sheet
+        i = 1
+        while i <= currentItemNum:
+            #first add the item SKU label
+            t.insert("end", sheet.cell(row=i + 2, column=1).value.lower())
             
+            #add space based on the size of the item SKU
+            j = 0
+            while j < (34 - len(sheet.cell(row=i + 2, column=1).value)):
+                t.insert("end", " ")
+                j += 1 
+
+            #add each of the matrix values to the string
+            j = 0
+            while j < int(currentBoxNum):
+                currentCellVal = str(sheet.cell(row=i + 2, column=j + 13).value)
+                if (currentCellVal == "None"):
+                    t.insert("end", "0  ")
+                else:
+                    t.insert("end", currentCellVal)
+                    #add spacing based on the value of the cell (to deal with multi digit values messing up the spacing)
+                    z = 0
+                    while z < (3 - len(currentCellVal)):
+                        t.insert("end", " ")
+                        z += 1
+                j += 1
+
+            t.insert("end", "\n\n")
+
             i += 1
 
         t.pack(side="left", fill="both", expand=True)
@@ -164,7 +188,10 @@ class SheetMenu(tk.Frame):
         currentBox = ""
         currentItem = ""
         while True:
-            item = str(scanSheet()) #get the next scanned item
+            #make the window unresponsive to clicks
+            self.grab_set()
+            item = str(scanSheet()) #get the next scanned 
+            self.grab_release()
 
             if item == "'/'" or item == "": #make sure it was a barcode
                 break
@@ -203,7 +230,7 @@ class SheetMenu(tk.Frame):
 
     #end the program
     def quit(self):
-        os.system(f'start excel {self.filename.get()}')
+        #os.system(f'start excel {self.filename.get()}')
         self.controller.quit()
 
 
@@ -237,5 +264,5 @@ class Application(tk.Tk):
 
 if __name__ == "__main__":
     app = Application()
-    app.geometry("1000x900")
+    app.geometry("1200x900")
     app.mainloop()
