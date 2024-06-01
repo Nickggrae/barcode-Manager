@@ -24,8 +24,11 @@ invoiceToProcessed.py: converts invoice format to back to the processed format (
 
 need to add: (Pressing Matters)
 1. find way to stop crashing from leaving window while in scan mode
-2. run in different process menu and scan
-3. play a sound when a item is added
+    -> run in different process menu and scan?
+2. Find another way to do the deletions now that there are not indexes 
+3. input error handled required
+4. made a bad sound for a misinput from the barcode scanner, filename misinput so on..
+5. Made the instructions on the sheet menu easier to understand
 
 
 need to add: (Luxaries)
@@ -37,7 +40,12 @@ need to add: (Luxaries)
 6. add note to application window when item is added with no box
 
 
-5/27/2024
+6/1/2024
+1. Added a sound that plays when a box or item is scanned and processed since sometimes the scanner scans an item but doesnt properly input the barcode value. Which makes it hard to know if it saved the scanned data since the barcode scanner itself will make a noise no matter what.
+2. The last input filename is now saved so you dont have to retype it in everytime you close the program.
+3. Now the total expected item instances for each item object and the current value registered to boxes is shown in the menu for a better user experience.
+
+5/30/2024
 1. Extended the sleep period of the scanner.
 2. Now screen menu update directly reads the values from the tables and shows the contents in the menu in a table format to make it understandable.
 

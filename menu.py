@@ -11,6 +11,7 @@ from fileOperations import copyInit
 import openpyxl
 import pandas
 import os
+from playsound import playsound
 
 fontSize = 15
 
@@ -27,10 +28,26 @@ class GetFilename(tk.Frame):
         for widget in self.winfo_children():
             widget.destroy()
 
+        prevFilename = ''
+
+        #if the saved file has been created get the previously input filename if not create the saved file for next run
+        if os.path.isfile('saved.xlsx'):
+            book = openpyxl.load_workbook('saved.xlsx')
+            sheet = book.active
+            
+            prevFilename = str(sheet.cell(row=1, column=1).value)
+            self.filename.set(prevFilename)
+
+            book.close()
+        else:
+            book = openpyxl.Workbook()
+            book.save('saved.xlsx')
+            book.close()
+
         tk.Label(self, text="Please Enter The Amazon Sheet or Copied Working Sheet", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Enter Filename: ", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Entry(self, textvariable=self.filename, font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Entry(self, textvariable=self.filename, font=("Helvetica", fontSize), width=75).pack(anchor="center")
         tk.Button(self, text="Continue", font=("Helvetica", fontSize), command=self.submit).pack(anchor="center")
         tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
@@ -38,6 +55,13 @@ class GetFilename(tk.Frame):
     #Start the scanning process on the existing file to append more records
     def submit(self):
         filename = self.filename.get()
+        
+        #update the most recently used filename to autofill when the menu is ran next time
+        book = openpyxl.load_workbook('saved.xlsx')
+        sheet = book.active
+        sheet.cell(row=1, column=1).value = filename
+        book.save('saved.xlsx')
+        book.close()
         
         if filename[0] != 'c' and filename[0] != 'o':
             newFile = copyInit(filename)
@@ -100,7 +124,7 @@ class SheetMenu(tk.Frame):
         currentItemList = []
 
         #labels for the displayed matrix
-        t.insert("end", "Item                             |")
+        t.insert("end", "Item                             |REQ|CUR|  |")
         i = 1
         while i <= int(currentBoxNum):
             t.insert("end", "B" + str(i) + "|")
@@ -119,6 +143,33 @@ class SheetMenu(tk.Frame):
             while j < (34 - len(sheet.cell(row=i + 2, column=1).value)):
                 t.insert("end", " ")
                 j += 1 
+
+            #get the expected value string from the sheet
+            t.insert("end", str(sheet.cell(row=i + 2, column=10).value))
+
+            j = 0
+            while j < (4 - len(str(sheet.cell(row=i + 2, column=10).value))):
+                t.insert("end", " ")
+                j += 1
+
+            #calculate the sum of the item instances for the item object to get the current value
+            currentInstancesCount = 0
+            j = 0
+            while j < int(currentBoxNum):
+                if str(sheet.cell(row=i + 2, column= j + 13).value) != 'None':
+                    currentInstancesCount += int(sheet.cell(row=i + 2, column= j + 13).value)
+                j += 1
+
+            #insert the current instances count into the presented string
+            t.insert("end", str(currentInstancesCount))
+
+            j = 0
+            while j < (4 - len(str(currentInstancesCount))):
+                t.insert("end", " ")
+                j += 1
+
+            #add the spacing to properly format the box matrix with its labels
+            t.insert("end", "   ")
 
             #add each of the matrix values to the string
             j = 0
@@ -197,6 +248,7 @@ class SheetMenu(tk.Frame):
                 break
             else:
                 if item[0] == 'B':
+                    playsound('tellRing.mp3')
                     currentBox = item
                     self.currentBox = currentBox
                 else:
@@ -204,6 +256,7 @@ class SheetMenu(tk.Frame):
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
+                        playsound('tellRing.mp3')
                         print("currentBox " + currentBox + ", currentItem: " + currentItem)
                         appendNewItem(filename, currentBox, currentItem)
                         currentItem = ""
@@ -230,7 +283,7 @@ class SheetMenu(tk.Frame):
 
     #end the program
     def quit(self):
-        #os.system(f'start excel {self.filename.get()}')
+        os.system(f'start excel {self.filename.get()}')
         self.controller.quit()
 
 
