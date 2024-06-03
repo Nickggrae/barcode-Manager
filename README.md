@@ -2,21 +2,21 @@
 Barcode Manager Program
 
 When you run the program you will be prompted to input a sheet
-    -> input a generated amazon inventory sheet, which will create a working file from to use.
-    -> input a changed%TIMESTAMP%.xlsx sheet created by the program, to continue inventory managment on the file.
+< br / >    -> input a generated amazon inventory sheet, which will create a working file from to use.
+< br / >    -> input a changed%TIMESTAMP%.xlsx sheet created by the program, to continue inventory managment on the file.
 
-Once you sumbit the filename you will enter the Working Sheet Menu Page.
+Once you submit the filename you will enter the Working Sheet Menu Page.
 
 You can press 'Add More' Which put you into scanning mode
-    -> you must scan a Box (format: BOX0000001 - BOX0000009)
-    -> then you can scan the items that fit into that box.
-    -> to change the current box just scan another box barcode.
-    -> once you decide you are done scanning press '/' to leave scanning mode.
+< br / >    -> you must scan a Box (format: BOX0000001 - BOX0000009)
+< br / >    -> then you can scan the items that fit into that box.
+< br / >    -> to change the current box just scan another box barcode.
+< br / >    -> once you decide you are done scanning press '/' to leave scanning mode.
 
 You can press 'Delete' to remove an item from the sheet
-    -> Works exactly as Add more but it removes items.
-    -> So scan you box, then scan the item to delete from the boxes record.
-    -> Press '/' to leave the scanning mode.
+< br / >    -> Works exactly as Add more but it removes items.
+< br / >    -> So scan you box, then scan the item to delete from the boxes record.
+< br / >    -> Press '/' to leave the scanning mode.
 
 ************************************************************************************************
   IF YOU CLICK OUT OF THE MENU WINDOW WHILE IN SCANNING MODE IT WILL CRASH FOR THE TIME BEING
@@ -25,13 +25,14 @@ You can press 'Delete' to remove an item from the sheet
 ************************************************************************************************
 
 The program will start with the amount of boxes in the Amazon File or the Working Changed file input.
-Click 'Add Box' to increment the box value and make it scannable.
 
+Click 'Add Box' to increment the box value and make it scannable.
+< br / >
 Press 'Quit' to end the program. This will open the working file for easy access.
 
 Press 'Back' to return to the file name input screen.
 
-
+< br / >< br / >
 Files Included:
 
 menu.py: the driver program for the GUI.
