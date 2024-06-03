@@ -1,44 +1,64 @@
 # barcode-Manager
 Barcode Manager Program
 
-There is a GUI that allows you to decide if you want to start a fresh scanning sheet or work off of an old one.
+When you run the program you will be prompted to input a sheet
+    -> input a generated amazon inventory sheet, which will create a working file from to use.
+    -> input a changed%TIMESTAMP%.xlsx sheet created by the program, to continue inventory managment on the file.
 
-Then from the GUI you can start scanning.
+Once you sumbit the filename you will enter the Working Sheet Menu Page.
 
-Once the file is created there is a sheet mangamnet window. Here you can decide to remove records from the sheet, or you can start scanning again in order to append more records to the sheet.
+You can press 'Add More' Which put you into scanning mode
+    -> you must scan a Box (format: BOX0000001 - BOX0000009)
+    -> then you can scan the items that fit into that box.
+    -> to change the current box just scan another box barcode.
+    -> once you decide you are done scanning press '/' to leave scanning mode.
 
-The purpose of this program is to allow for easy documentation of the items scanned into each box for item shipments. First a box is scanned, then each item following will be associated with said box. Until another box is scanned, then each item following with be associated with said box.
+You can press 'Delete' to remove an item from the sheet
+    -> Works exactly as Add more but it removes items.
+    -> So scan you box, then scan the item to delete from the boxes record.
+    -> Press '/' to leave the scanning mode.
 
-Now to end the scanning you need to input '/' which will end the scanning.
+************************************************************************************************
+  IF YOU CLICK OUT OF THE MENU WINDOW WHILE IN SCANNING MODE IT WILL CRASH FOR THE TIME BEING
+  CLICK ON ANY OTHER PROCESS/PROGRAM AND PRESS '/' TO KILL THE SCANNING MODE AND RECOVER THE 
+  MENU TO A RUNNING STATE.
+************************************************************************************************
+
+The program will start with the amount of boxes in the Amazon File or the Working Changed file input.
+Click 'Add Box' to increment the box value and make it scannable.
+
+Press 'Quit' to end the program. This will open the working file for easy access.
+
+Press 'Back' to return to the file name input screen.
+
+
+Files Included:
 
 menu.py: the driver program for the GUI.
 
 barcode.py: the driver program for the barcode scanning (keylogger).
 
-processItems.py: adds a scanned item to a processed sheet.
-
-buildInvoice.py: will be run when the user closes the program to turn the working processed item list into the final invoice format.
-
-invoiceToProcessed.py: converts invoice format to back to the processed format (just a list of all the items data).
+fileOperations.py: holds the functions used by the menu to update the information in the working file based on the scanned information. 
 
 
 need to add: (Pressing Matters)
 1. find way to stop crashing from leaving window while in scan mode
     -> run in different process menu and scan?
-2. Find another way to do the deletions now that there are not indexes 
-3. input error handled required
-4. made a bad sound for a misinput from the barcode scanner, filename misinput so on..
-5. Made the instructions on the sheet menu easier to understand
+2. made a bad sound for a misinput from the barcode scanner, filename misinput so on..
 
 
 need to add: (Luxaries)
 1. make the font size comfigurable from the application
 2. make the application window resulation configurable from the application
 3. make the application start from the running of a single executable
-4. store a last used sheet in a file to autofill in for the use an existing sheet field to default to
-5. Add back buttons rather than having to quit to go back to the menu
-6. add note to application window when item is added with no box
+4. add note to application window when item is added with no box
 
+6/3/2024
+1. Change the deletion to working exactly as the add item but instead it decrements the value instead of using a index since there are not indexes with the new display method.
+2. Changed the sound library so the program can be more portable (ran into problems in testing)
+3. Added a back button on the sheet menu so you can access a different file without needing to restart the program.
+4. Made the instructions easier to understand.
+5. Added input error handling for the filename input on the inital screen.
 
 6/1/2024
 1. Added a sound that plays when a box or item is scanned and processed since sometimes the scanner scans an item but doesnt properly input the barcode value. Which makes it hard to know if it saved the scanned data since the barcode scanner itself will make a noise no matter what.

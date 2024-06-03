@@ -1,7 +1,7 @@
 #Nicholas Wharton
 #Barcode Scanner Item Managment
 #file operations to manage scanned barcode data
-#3/16/2024
+#6/4/2024
 
 import openpyxl
 import pandas
@@ -134,33 +134,30 @@ def appendNewItem(filename, currentBox, currentItem):
     book.close()
 
 
-def deleteRecord(filename, selectedRowIndex, currentItemList):
-        #determine how many records are in the file
-        ds = pandas.read_excel(filename)
-        fileRows = ds.shape[0] + 1
-        currentItemNum = fileRows - 2
-        inputIndex = int(selectedRowIndex)
+#for each box-item pair scanned given the working file decrement the corresponding item instance matrix cell.
+def deleteItem(filename, currentBox, currentItem):
+    #determine how many records are in the file
+    ds = pandas.read_excel(filename)
+    fileRows = ds.shape[0] + 1
+    currentItemNum = fileRows - 2
+    
+    book = openpyxl.load_workbook(filename)
+    sheet = book.active
+    
+    currentBoxNum = int(currentBox[9])
 
-        book = openpyxl.load_workbook(filename)
-        sheet = book.active
-        
-        item = str(currentItemList[inputIndex - 1][1])
-        print("Item: " + item)
-        boxNum = int(currentItemList[inputIndex - 1][0][9])
+    i = 1
+    while i < currentItemNum:
+        indexedItem = str(sheet.cell(row=i + 2, column=5).value)
+        if indexedItem == currentItem:
+            if sheet.cell(row=i + 2, column=12 + currentBoxNum).value != None:
+                sheet.cell(row=i + 2, column=12 + currentBoxNum).value = int(sheet.cell(row=i + 2, column=12 + currentBoxNum).value) - 1
 
-        i = 3
-        while i < currentItemNum:
-            if sheet.cell(row=i, column=5).value == item:
-                if (sheet.cell(row=i, column=12 + boxNum).value - 1) == 0:
-                    sheet.cell(row=i, column=12 + boxNum).value = None
-                else:
-                    sheet.cell(row=i, column=12 + boxNum).value = sheet.cell(row=i, column=12 + boxNum).value - 1
-            i += 1
+        i += 1
 
-        book.save(filename)
-        book.close()
+    book.save(filename)
+    book.close()
 
 
-#deleteRecord("copiedSheet05-22-15-19.xlsx", 1, [["BOX0000001","PPB-Kin-Hick-BBQ-2pk-3Lid"]])
 #appendNewItem("copiedSheet05-22-15-19.xlsx", "BOX0000001", "PPB-Kin-Hick-BBQ-2pk-3Lid")
 #copyInit("2024-03-13_02-17-15_pack-group-1_99e4d13a-e977-4009-adb0-5ff8d8457be5.xlsx")

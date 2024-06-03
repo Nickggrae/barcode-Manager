@@ -1,17 +1,17 @@
 # Nicholas Wharton
 # Secure Password Manager
 # Menu Controller
-# 3/11/2024
+# 6/4/2024
 
 import tkinter as tk
 from barcode import scanSheet
 from fileOperations import appendNewItem
-from fileOperations import deleteRecord
+from fileOperations import deleteItem
 from fileOperations import copyInit
 import openpyxl
 import pandas
 import os
-from playsound import playsound
+from pygame import mixer
 
 fontSize = 15
 
@@ -63,11 +63,15 @@ class GetFilename(tk.Frame):
         book.save('saved.xlsx')
         book.close()
         
-        if filename[0] != 'c' and filename[0] != 'o':
+        if filename == '': #no filename was input
+            print("no filename was input")
+        elif filename[0] == '2': #file is a amazon generated file
             newFile = copyInit(filename)
             self.controller.show_frame(SheetMenu, processedFilename=newFile)
-        else:
+        elif filename[0] == 'c': #file is a program generated file
             self.controller.show_frame(SheetMenu, processedFilename=filename)
+        else:
+            print("the file input is not supported")
 
     #end the program
     def quit(self):
@@ -199,37 +203,59 @@ class SheetMenu(tk.Frame):
         self.currentItemList = currentItemList
 
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="Select Row: ", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Entry(self, textvariable=self.selectedRowIndex, font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Button(self, text="Delete", font=("Helvetica", fontSize), command=self.delete).pack(anchor="center")
         tk.Button(self, text="Add More", font=("Helvetica", fontSize), command=self.append).pack(anchor="center")
+        tk.Button(self, text="Back", font=("Helvetica", fontSize), command=self.back).pack(anchor="center")
         tk.Button(self, text="Quit", font=("Helvetica", fontSize), command=self.quit).pack(anchor="center")
         tk.Label(self, text="-----------------------------------------", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Current Box Count: " + currentBoxNum, font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Button(self, text="Add Box", font=("Helvetica", fontSize), command=self.addBox).pack(anchor="center")
         tk.Label(self, text="Current Box:", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text=self.currentBox, font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="Now you are editing the created file directly", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="Press Add More to enter *Scanning Mode*", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="When in *Scanning Mode* you can scan a ", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="box then all the items for that box", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="You can scan a new box to change the", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="current box and then continue scanning items", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="To leave *Scanning Mode* Press '/'", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="If you need to reenter Scanning Mode just", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="press Add More again.", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="If you click outside the program window", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="while in scanning mode it will become", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="non-responsive just click on any other", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="program and press '/' to leave *Scanning Mode*", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="To delete a record type the index number", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="Listed in the input box and press delete", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="\n\nPress Add More to enter *Scanning Mode*\n", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Must scan a Box before scanning Items", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="To leave *Scanning Mode* Press '/'\n", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="If the window becomes unrespnsive click", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="any other window and press '/' to kill", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="the scanning mode process\n", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="To end the program press the quit button", font=("Helvetica", fontSize)).pack(anchor="center")
-        tk.Label(self, text="This will open the working file for you to see", font=("Helvetica", fontSize)).pack(anchor="center")
 
     #delete a record from the sheet based on user input and refresh the page
     def delete(self):
-        deleteRecord(self.filename.get(), self.selectedRowIndex.get(), self.currentItemList)
+        filename = self.filename.get()
+        
+        currentBox = ""
+        currentItem = ""
+        while True:
+            #make the window unresponsive to clicks
+            self.grab_set()
+            item = str(scanSheet()) #get the next scanned 
+            self.grab_release()
+
+            if item == "'/'" or item == "": #make sure it was a barcode
+                break
+            else:
+                if item[0] == 'B':
+                    mixer.init()
+                    mixer.music.load('tellRing.mp3')
+                    mixer.music.play()
+                    currentBox = item
+                    self.currentBox = currentBox
+                else:
+                    currentItem = item
+                    if currentBox == "":
+                        print("No Box Associated with Item")
+                    else:
+                        mixer.init()
+                        mixer.music.load('tellRing.mp3')
+                        mixer.music.play()
+                        print("currentBox " + currentBox + ", currentItem: " + currentItem)
+                        deleteItem(filename, currentBox, currentItem)
+                        currentItem = ""
+                self.refresh()
+                self.update()
+        
+        self.currentBox = "None"
         self.refresh()
 
     #Start the scanning process on the existing file to append more records
@@ -248,7 +274,9 @@ class SheetMenu(tk.Frame):
                 break
             else:
                 if item[0] == 'B':
-                    playsound('tellRing.mp3')
+                    mixer.init()
+                    mixer.music.load('tellRing.mp3')
+                    mixer.music.play()
                     currentBox = item
                     self.currentBox = currentBox
                 else:
@@ -256,7 +284,9 @@ class SheetMenu(tk.Frame):
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
-                        playsound('tellRing.mp3')
+                        mixer.init()
+                        mixer.music.load('tellRing.mp3')
+                        mixer.music.play()
                         print("currentBox " + currentBox + ", currentItem: " + currentItem)
                         appendNewItem(filename, currentBox, currentItem)
                         currentItem = ""
@@ -280,6 +310,9 @@ class SheetMenu(tk.Frame):
         book.close()
         
         self.refresh()
+
+    def back(self):
+        self.controller.show_frame(GetFilename)
 
     #end the program
     def quit(self):
