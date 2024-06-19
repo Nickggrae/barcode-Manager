@@ -63,9 +63,11 @@ fileOperations.py: holds the functions used by the menu to update the informatio
 
 
 need to add: (Pressing Matters)
-1. find way to stop crashing from leaving window while in scan mode
-    -> run in different process menu and scan?
-2. made a bad sound for a misinput from the barcode scanner, filename misinput so on..
+1. read barcode for sleep time to see if you can make it longer
+2. add label of last item scanned and how many were scanned in a row
+3. find way to stop crashing from leaving window while in scan mode. run in different process menu and scan?
+4. Proper comments for menu and fileOperations
+5. Show what mode the menu is in (ADDING SCAN MODE OR DELETE SCAN MODE visually or audibly)
 
 
 need to add: (Luxaries)
@@ -73,8 +75,16 @@ need to add: (Luxaries)
 2. make the application window resulation configurable from the application
 3. make the application start from the running of a single executable
 4. add note to application window when item is added with no box
+5. read out what is scanned
 
 
+6/19/2024
+1. Fixed the formatting to start after the longest SKU length so they never overlap
+2. Now the box number will remain when jumping between modes so you dont have to rescan the box number when jumping between adding and deleting
+3. Fixed the indexing of the file operations to stop ignoring the final record
+4. Added a noise thats played if a scanned item is not in the sheet.
+5. Changed the noise files to be unique for each action. One for item not found in sheet scanned, one for item found in sheet scanned, and one for box scanned.
+6. Added the last scanned item listed on the menu.
 
 6/3/2024
 1. Change the deletion to working exactly as the add item but instead it decrements the value instead of using a index since there are not indexes with the new display method.

@@ -109,6 +109,8 @@ def copyInit(azFile):
 
 #for each new item given the working file and the box its supposed to go into update the item instance matrix in the given file.
 def appendNewItem(filename, currentBox, currentItem):
+    itemFound = False
+
     #determine how many records are in the file
     ds = pandas.read_excel(filename)
     fileRows = ds.shape[0] + 1
@@ -120,9 +122,10 @@ def appendNewItem(filename, currentBox, currentItem):
     currentBoxNum = int(currentBox[9])
 
     i = 1
-    while i < currentItemNum:
+    while i <= currentItemNum:
         indexedItem = str(sheet.cell(row=i + 2, column=5).value)
         if indexedItem == currentItem:
+            itemFound = True
             if sheet.cell(row=i + 2, column=12 + currentBoxNum).value == None:
                 sheet.cell(row=i + 2, column=12 + currentBoxNum).value = 1
             else:
@@ -132,10 +135,12 @@ def appendNewItem(filename, currentBox, currentItem):
 
     book.save(filename)
     book.close()
-
+    return itemFound
 
 #for each box-item pair scanned given the working file decrement the corresponding item instance matrix cell.
 def deleteItem(filename, currentBox, currentItem):
+    itemFound = False
+
     #determine how many records are in the file
     ds = pandas.read_excel(filename)
     fileRows = ds.shape[0] + 1
@@ -150,6 +155,7 @@ def deleteItem(filename, currentBox, currentItem):
     while i < currentItemNum:
         indexedItem = str(sheet.cell(row=i + 2, column=5).value)
         if indexedItem == currentItem:
+            itemFound = True
             if sheet.cell(row=i + 2, column=12 + currentBoxNum).value != None:
                 sheet.cell(row=i + 2, column=12 + currentBoxNum).value = int(sheet.cell(row=i + 2, column=12 + currentBoxNum).value) - 1
 
@@ -157,6 +163,7 @@ def deleteItem(filename, currentBox, currentItem):
 
     book.save(filename)
     book.close()
+    return itemFound
 
 
 #appendNewItem("copiedSheet05-22-15-19.xlsx", "BOX0000001", "PPB-Kin-Hick-BBQ-2pk-3Lid")

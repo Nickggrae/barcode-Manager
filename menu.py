@@ -88,6 +88,7 @@ class SheetMenu(tk.Frame):
         self.filename = tk.StringVar() #the filename of the book holding the scanned records
         self.refreshes = 0
         self.currentBox = "None"
+        self.lastScanned = ""
         self.currentItemList = []
 
     #used when the page is loaded to refresh the displayed information
@@ -127,14 +128,34 @@ class SheetMenu(tk.Frame):
         #list of current items records pulled from the file
         currentItemList = []
 
+        #determine the length of the longest SKU in the list, add 4 ontop for proper formatting
+        largestLength = 0
+        i = 1
+        while i <= currentItemNum:
+            if len(str(sheet.cell(row=i + 2, column=1).value)) > largestLength:
+                largestLength = len(str(sheet.cell(row=i + 2, column=1).value))
+            i += 1
+
+        largestLength += 4
+        
         #labels for the displayed matrix
-        t.insert("end", "Item                             |REQ|CUR|  |")
+        labelStr = "Item"
+        i = 4
+        while i < largestLength:
+            labelStr += " "
+
+            i += 1
+
+        labelStr += "|REQ|CUR|  |"
+        t.insert("end", labelStr)
+
         i = 1
         while i <= int(currentBoxNum):
             t.insert("end", "B" + str(i) + "|")
             i += 1
 
         t.insert("end", "\n")
+
 
         #fill in the items and their current recorded values from the sheet
         i = 1
@@ -144,7 +165,7 @@ class SheetMenu(tk.Frame):
             
             #add space based on the size of the item SKU
             j = 0
-            while j < (34 - len(sheet.cell(row=i + 2, column=1).value)):
+            while j < (largestLength + 1 - len(sheet.cell(row=i + 2, column=1).value)):
                 t.insert("end", " ")
                 j += 1 
 
@@ -212,6 +233,8 @@ class SheetMenu(tk.Frame):
         tk.Button(self, text="Add Box", font=("Helvetica", fontSize), command=self.addBox).pack(anchor="center")
         tk.Label(self, text="Current Box:", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text=self.currentBox, font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text="Last Scanned:", font=("Helvetica", fontSize)).pack(anchor="center")
+        tk.Label(self, text=self.lastScanned, font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="\n\nPress Add More to enter *Scanning Mode*\n", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="Must scan a Box before scanning Items", font=("Helvetica", fontSize)).pack(anchor="center")
         tk.Label(self, text="To leave *Scanning Mode* Press '/'\n", font=("Helvetica", fontSize)).pack(anchor="center")
@@ -226,6 +249,11 @@ class SheetMenu(tk.Frame):
         
         currentBox = ""
         currentItem = ""
+
+        #if a box has already been scanned set it to the current box so it doesnt have to be rescanned
+        if self.currentBox != "None":
+            currentBox = self.currentBox
+
         while True:
             #make the window unresponsive to clicks
             self.grab_set()
@@ -237,25 +265,32 @@ class SheetMenu(tk.Frame):
             else:
                 if item[0] == 'B':
                     mixer.init()
-                    mixer.music.load('tellRing.mp3')
+                    mixer.music.load('bauDong.mp3')
                     mixer.music.play()
                     currentBox = item
                     self.currentBox = currentBox
+                    self.lastScanned = item
                 else:
                     currentItem = item
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
-                        mixer.init()
-                        mixer.music.load('tellRing.mp3')
-                        mixer.music.play()
                         print("currentBox " + currentBox + ", currentItem: " + currentItem)
-                        deleteItem(filename, currentBox, currentItem)
+                        itemFound = deleteItem(filename, currentBox, currentItem)
+                        if itemFound == True:
+                            mixer.init()
+                            mixer.music.load('smallTellRing.mp3')
+                            mixer.music.play()
+                            self.lastScanned = item
+                        else:
+                            mixer.init()
+                            mixer.music.load('fogHorn.mp3')
+                            mixer.music.play()
+
                         currentItem = ""
                 self.refresh()
                 self.update()
         
-        self.currentBox = "None"
         self.refresh()
 
     #Start the scanning process on the existing file to append more records
@@ -264,6 +299,11 @@ class SheetMenu(tk.Frame):
         
         currentBox = ""
         currentItem = ""
+
+        #if a box has already been scanned set it to the current box so it doesnt have to be rescanned
+        if self.currentBox != "None":
+            currentBox = self.currentBox
+
         while True:
             #make the window unresponsive to clicks
             self.grab_set()
@@ -275,25 +315,31 @@ class SheetMenu(tk.Frame):
             else:
                 if item[0] == 'B':
                     mixer.init()
-                    mixer.music.load('tellRing.mp3')
+                    mixer.music.load('bauDong.mp3')
                     mixer.music.play()
                     currentBox = item
                     self.currentBox = currentBox
+                    self.lastScanned = item
                 else:
                     currentItem = item
                     if currentBox == "":
                         print("No Box Associated with Item")
                     else:
-                        mixer.init()
-                        mixer.music.load('tellRing.mp3')
-                        mixer.music.play()
                         print("currentBox " + currentBox + ", currentItem: " + currentItem)
-                        appendNewItem(filename, currentBox, currentItem)
+                        itemFound = appendNewItem(filename, currentBox, currentItem)
+                        if itemFound == True:
+                            mixer.init()
+                            mixer.music.load('smallTellRing.mp3')
+                            mixer.music.play()
+                            self.lastScanned = item
+                        else:
+                            mixer.init()
+                            mixer.music.load('fogHorn.mp3')
+                            mixer.music.play()
                         currentItem = ""
                 self.refresh()
                 self.update()
         
-        self.currentBox = "None"
         self.refresh()
 
     #Increments the total boxes value in the working sheet
